@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="2Xy-md-vGT">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <scenes>
+        <!--QR Scanner-->
+        <scene sceneID="bzg-b0-elg">
+            <objects>
+                <viewController storyboardIdentifier="QRViewController" title="QR Scanner" id="25U-bF-74k" customClass="QRViewController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="JHj-i7-RwX"/>
+                        <viewControllerLayoutGuide type="bottom" id="jGp-Up-BYq"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dhh-hA-XDr">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OPw-ok-MuW" customClass="UIViewResize" customModule="QRScanner" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="600" height="572"/>
+                                <color key="backgroundColor" red="0.96470588239999999" green="0.53725490200000003" blue="0.12941176469999999" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="OPw-ok-MuW" secondAttribute="trailing" id="2TO-3E-h7h"/>
+                            <constraint firstItem="OPw-ok-MuW" firstAttribute="leading" secondItem="dhh-hA-XDr" secondAttribute="leading" id="CIg-yk-Yu7"/>
+                            <constraint firstItem="jGp-Up-BYq" firstAttribute="top" secondItem="OPw-ok-MuW" secondAttribute="bottom" id="UBu-Kh-FW8"/>
+                            <constraint firstItem="OPw-ok-MuW" firstAttribute="top" secondItem="JHj-i7-RwX" secondAttribute="bottom" constant="8" id="ddn-6f-Dmo"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="preview" destination="OPw-ok-MuW" id="LIa-B0-6h9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yzl-N6-XFK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1207" y="901"/>
+        </scene>
+        <!--Root View Controller-->
+        <scene sceneID="9ts-Qg-8Qv">
+            <objects>
+                <tableViewController storyboardIdentifier="HistoryController" clearsSelectionOnViewWillAppear="NO" id="nac-Id-nlV" customClass="HistoryController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="b5h-yO-mTK">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="tzE-Wi-ut4">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tzE-Wi-ut4" id="KDu-m0-rR6">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="nac-Id-nlV" id="ehq-La-lrQ"/>
+                            <outlet property="delegate" destination="nac-Id-nlV" id="uz7-rO-4Fe"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="nrq-hC-kyi"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pBy-yA-pri" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2027" y="239"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="RJH-Bd-LqQ">
+            <objects>
+                <navigationController id="3kY-cO-rMr" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="NTA-fN-jhL">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="nac-Id-nlV" kind="relationship" relationship="rootViewController" id="qrR-1F-xUp"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uNz-z0-Ozr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1207" y="239"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="dt4-8p-2fd">
+            <objects>
+                <splitViewController id="2Xy-md-vGT" sceneMemberID="viewController">
+                    <connections>
+                        <segue destination="3kY-cO-rMr" kind="relationship" relationship="masterViewController" id="b46-CR-v98"/>
+                        <segue destination="25U-bF-74k" kind="relationship" relationship="detailViewController" id="5nm-Yr-Mge"/>
+                    </connections>
+                </splitViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="peO-K9-Itv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="387" y="570"/>
+        </scene>
+    </scenes>
+</document>
