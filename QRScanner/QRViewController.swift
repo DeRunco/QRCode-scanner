@@ -87,58 +87,22 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		preview.clipsToBounds = false
 		captureSession.startRunning()
 		if (videoPreviewLayer == nil) {println("Running on the simulator"); return}
-//		self.registerForDeviceOrientationChanges()
 	}
 
-//	func registerForDeviceOrientationChanges() {
-//		UIDevice.currentDevice().beginGeneratingDeviceOrientationNotifications()
-//		NSNotificationCenter.defaultCenter().addObserver(self, selector: "orientationChange:", name: UIDeviceOrientationDidChangeNotification, object: UIDevice.currentDevice());
-//
-//	}
-
-//	func removeForDeviceOrientationChanges() {
-//		UIDevice.currentDevice().endGeneratingDeviceOrientationNotifications()
-//		NSNotificationCenter.defaultCenter().removeObserver(self);
-//	}
-
-//	@objc func orientationChange(n: NSNotification) {
-//		println("\(__FUNCTION__) - newValue: \(UIDevice.currentDevice().orientation.rawValue)")
-//		if captureOutput.connectionWithMediaType(AVMediaTypeVideo) == nil {println("No video connection for \(captureOutput)"); return}
-//		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = AVCaptureVideoOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)!
-////		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = AVCaptureVideoOrientation.Portrait
-//
-//		var angle: CGFloat = 0.0;
-//		switch (UIDevice.currentDevice().orientation) {
-//				case .Portrait:
-//					angle = 0
-//				case .PortraitUpsideDown:
-//					angle = CGFloat(M_PI)
-//				case .LandscapeLeft:
-//					angle = CGFloat(M_PI_2)
-//				case .LandscapeRight:
-//					angle = CGFloat(M_PI+M_PI_2)
-//				default:
-//					break;
-//		}
-//
-//		var trans = CATransform3DConcat(CATransform3DIdentity, CATransform3DMakeRotation(angle, 0, 0, -1))
-//		videoPreviewLayer.transform = trans
-//	}
-
-	override func viewDidLayoutSubviews() {
-		println("\(__FUNCTION__) - newValue: \(UIDevice.currentDevice().orientation.rawValue)")
+	//the video orientation is bound to the interface orientation
+	func updateViewDisplayAccordingToOrientation(orientation: UIInterfaceOrientation) {
 		if captureOutput.connectionWithMediaType(AVMediaTypeVideo) == nil {println("No video connection for \(captureOutput)"); return}
-		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = AVCaptureVideoOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)!
+		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!
 
 		var angle: CGFloat = 0.0;
-		switch (self.interfaceOrientation) {
+		switch (orientation) {
 		case .Portrait:
 			angle = 0
 		case .PortraitUpsideDown:
 			angle = CGFloat(M_PI)
-		case .LandscapeRight:
-			angle = CGFloat(M_PI_2)
 		case .LandscapeLeft:
+			angle = CGFloat(M_PI_2)
+		case .LandscapeRight:
 			angle = CGFloat(M_PI+M_PI_2)
 		default:
 			break;
@@ -148,16 +112,30 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		videoPreviewLayer.transform = trans
 	}
 
+	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+		super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+		var toOrientation = UIInterfaceOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)
+		if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.Unknown}
+		if toOrientation == UIInterfaceOrientation.LandscapeRight {toOrientation = UIInterfaceOrientation.LandscapeLeft}
+		else if toOrientation == UIInterfaceOrientation.LandscapeLeft { toOrientation = UIInterfaceOrientation.LandscapeRight}
+
+		coordinator.animateAlongsideTransition({ (_) -> Void in
+			self.willAnimateRotationToInterfaceOrientation(toOrientation!, duration: 0.3)
+		}, completion: { (_) -> Void in
+			self.didRotateFromInterfaceOrientation(toOrientation!)
+		})
+	}
+	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+		self.updateViewDisplayAccordingToOrientation(toInterfaceOrientation)
+	}
+
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
 		if (videoPreviewLayer == nil) {return}//we are on simulator
+
 		videoPreviewLayer.frame = preview.layer.bounds
-		displayMessage("Scan a QR Code to start")
-
+		self.updateViewDisplayAccordingToOrientation(self.interfaceOrientation)
 	}
-
-
-	
 
 	override func shouldAutorotate() -> Bool {
 		return (self.view.bounds.width > self.view.bounds.height)
@@ -219,7 +197,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		label.backgroundColor = UIColor.redColor()
 		label.textColor = UIColor.whiteColor()
 		let size = label.sizeThatFits(CGSizeMake(self.view.bounds.size.width, 200))
-		label.frame = CGRectMake(self.view.bounds.size.width/2 - size.width/2, 20, size.width, size.height)
+		label.frame = CGRectMake(self.view.bounds.size.width/2 - size.width/2, self.preview.frame.origin.y, size.width, size.height)
 		self.view.addSubview(label)
 		NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: Selector("hideError:"), userInfo:["view":label], repeats: false)
 	}
