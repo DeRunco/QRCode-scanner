@@ -3,31 +3,31 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		562DCB161B45341C00A95D2C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB151B45341C00A95D2C /* AppDelegate.swift */; };
-		562DCB1D1B45341C00A95D2C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB1C1B45341C00A95D2C /* Images.xcassets */; };
 		562DCB401B45345100A95D2C /* HistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3A1B45345100A95D2C /* HistoryController.swift */; };
 		562DCB421B45345100A95D2C /* QRCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3C1B45345100A95D2C /* QRCorners.swift */; };
 		562DCB431B45345100A95D2C /* QRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3D1B45345100A95D2C /* QRViewController.swift */; };
-		562DCB571B457BC700A95D2C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB551B457BC700A95D2C /* Main.storyboard */; };
 		562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB561B457BC700A95D2C /* LaunchScreen.xib */; };
-		562DCB5A1B457C5400A95D2C /* Main~ipad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB591B457C5400A95D2C /* Main~ipad.storyboard */; };
+		56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A1D58C1B46B52C00EA9336 /* Images.xcassets */; };
+		56A1D5901B46B83E00EA9336 /* Main~ipad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB591B457C5400A95D2C /* Main~ipad.storyboard */; };
+		56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB551B457BC700A95D2C /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		562DCB101B45341C00A95D2C /* QRScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		562DCB141B45341C00A95D2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		562DCB151B45341C00A95D2C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		562DCB1C1B45341C00A95D2C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		562DCB3A1B45345100A95D2C /* HistoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryController.swift; sourceTree = "<group>"; };
 		562DCB3C1B45345100A95D2C /* QRCorners.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCorners.swift; sourceTree = "<group>"; };
 		562DCB3D1B45345100A95D2C /* QRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRViewController.swift; sourceTree = "<group>"; };
 		562DCB551B457BC700A95D2C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		562DCB561B457BC700A95D2C /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		562DCB591B457C5400A95D2C /* Main~ipad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Main~ipad.storyboard"; sourceTree = "<group>"; };
+		56A1D58C1B46B52C00EA9336 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,10 +64,10 @@
 				562DCB3C1B45345100A95D2C /* QRCorners.swift */,
 				562DCB3D1B45345100A95D2C /* QRViewController.swift */,
 				562DCB151B45341C00A95D2C /* AppDelegate.swift */,
-				562DCB1C1B45341C00A95D2C /* Images.xcassets */,
 				562DCB591B457C5400A95D2C /* Main~ipad.storyboard */,
 				562DCB551B457BC700A95D2C /* Main.storyboard */,
 				562DCB561B457BC700A95D2C /* LaunchScreen.xib */,
+				56A1D58C1B46B52C00EA9336 /* Images.xcassets */,
 				562DCB131B45341C00A95D2C /* Supporting Files */,
 			);
 			path = QRScanner;
@@ -116,7 +116,7 @@
 				};
 			};
 			buildConfigurationList = 562DCB0B1B45341C00A95D2C /* Build configuration list for PBXProject "QRScanner" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -138,10 +138,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				562DCB5A1B457C5400A95D2C /* Main~ipad.storyboard in Resources */,
-				562DCB1D1B45341C00A95D2C /* Images.xcassets in Resources */,
+				56A1D5901B46B83E00EA9336 /* Main~ipad.storyboard in Resources */,
+				56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */,
+				56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */,
 				562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */,
-				562DCB571B457BC700A95D2C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +249,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = QRScanner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -260,6 +261,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = QRScanner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

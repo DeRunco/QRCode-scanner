@@ -8,22 +8,42 @@
 
 import UIKit
 
-class HistoryEntry: NSObject {
+let kHistoryStorage = "History Key"
+
+class HistoryEntry: NSObject, NSCoding {
 	var date: NSDate!
 	var string: String!
+
+	override init() {
+		super.init()
+	}
+
+	required init(coder aDecoder: NSCoder) {
+		self.date = aDecoder.decodeObjectForKey("date") as! NSDate
+		self.string = aDecoder.decodeObjectForKey("string") as! String
+	}
+
+	func encodeWithCoder(aCoder: NSCoder) {
+		aCoder.encodeObject(date, forKey: "date")
+		aCoder.encodeObject(string, forKey: "string")
+	}
+
 
 	func toString() -> String {
 		return "\(date!): \(string!)"
 	}
 }
 
+var counter = 0;
+
 class HistoryStorage {
 	var cachedHistory = [HistoryEntry]()
 
 	func loadInfo() {
 		cachedHistory.removeAll(keepCapacity: true)
-		let history: NSArray! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSArray!
-		if history == nil { return }
+		let archivedHistory: NSData! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSData!
+		if archivedHistory == nil { return }
+		let history = NSKeyedUnarchiver.unarchiveObjectWithData(archivedHistory) as! NSArray!
 		for var count = 0; count < history.count; count++ {
 			if let entry = history[count] as? HistoryEntry {
 				cachedHistory.append(entry)
@@ -31,15 +51,20 @@ class HistoryStorage {
 		}
 	}
 
-	func saveInfo(entries: [HistoryEntry]) {
-		self.loadInfo()
-		for entry:HistoryEntry in entries {
-			cachedHistory.append(entry)
+	func saveInfo(entries:[HistoryEntry]!) {
+		if (entries != nil) {
+			for entry:HistoryEntry in entries {
+				entry.string = entry.string + "\(counter++)"
+				cachedHistory.append(entry)
+			}
 		}
-		NSUserDefaults.standardUserDefaults().setObject(cachedHistory, forKey: kHistoryStorage)
+		var dataForm = NSKeyedArchiver.archivedDataWithRootObject(cachedHistory)
+		NSUserDefaults.standardUserDefaults().setObject(dataForm, forKey: kHistoryStorage)
 		self.loadInfo()
 	}
 }
+
+let history = HistoryStorage()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -48,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var history = HistoryStorage()
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		// Override point for customization after application launch.
+		history.loadInfo()
 		return true
 	}
 

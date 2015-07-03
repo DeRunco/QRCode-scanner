@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BHP-24-I4U">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="BHP-24-I4U">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
@@ -18,7 +19,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nh6-aa-Tqn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-937" y="305"/>
+            <point key="canvasLocation" x="-499.73333333333335" y="288.73333333333335"/>
         </scene>
         <!--Scanner-->
         <scene sceneID="tne-QT-ifu">
@@ -29,11 +30,11 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WD3-wT-biO" customClass="UIViewResize" customModule="QRScanner" customModuleProvider="target">
-                                <rect key="frame" x="4" y="68" width="592" height="528"/>
+                                <rect key="frame" x="4" y="68" width="312" height="496"/>
                                 <color key="backgroundColor" red="0.96470588239999999" green="0.53725490200000003" blue="0.12941176469999999" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
@@ -48,7 +49,7 @@
                     <navigationItem key="navigationItem" title="QR Scanner" id="GBr-Iq-9S4">
                         <barButtonItem key="rightBarButtonItem" title="History" id="oND-4H-M9v">
                             <connections>
-                                <segue destination="3kA-xC-wnc" kind="show" id="NHK-ko-v2x"/>
+                                <segue destination="3kA-xC-wnc" kind="push" id="NHK-ko-v2x"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -58,22 +59,48 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-197" y="305"/>
+            <point key="canvasLocation" x="-105.06666666666666" y="288.73333333333335"/>
         </scene>
         <!--HistoryController-->
         <scene sceneID="bKL-qZ-Zeg">
             <objects>
                 <tableViewController storyboardIdentifier="HistoryController" title="HistoryController" clearsSelectionOnViewWillAppear="NO" id="3kA-xC-wnc" customClass="HistoryController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="rnO-UI-VJA">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Nwu-Af-9Un">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="HistoryCellID" rowHeight="56" id="Nwu-Af-9Un" customClass="HistoryControllerCell" customModule="QRScanner" customModuleProvider="target">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Nwu-Af-9Un" id="GA9-qN-2Ul">
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RFn-Nu-2SD">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="33"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qYI-n3-9fn">
+                                            <rect key="frame" x="558" y="34" width="42" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="RFn-Nu-2SD" secondAttribute="trailing" id="AWN-Ck-EpC"/>
+                                        <constraint firstAttribute="bottom" secondItem="qYI-n3-9fn" secondAttribute="bottom" id="HmR-5H-KgI"/>
+                                        <constraint firstItem="qYI-n3-9fn" firstAttribute="top" secondItem="RFn-Nu-2SD" secondAttribute="bottom" constant="1" id="XLg-KD-9eN"/>
+                                        <constraint firstAttribute="trailing" secondItem="qYI-n3-9fn" secondAttribute="trailing" id="ZKo-mo-uqV"/>
+                                        <constraint firstItem="RFn-Nu-2SD" firstAttribute="top" secondItem="GA9-qN-2Ul" secondAttribute="top" id="gGw-5B-I1u"/>
+                                        <constraint firstItem="RFn-Nu-2SD" firstAttribute="leading" secondItem="GA9-qN-2Ul" secondAttribute="leading" id="scM-bU-5nF"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="detail" destination="qYI-n3-9fn" id="zjT-1L-ieb"/>
+                                    <outlet property="title" destination="RFn-Nu-2SD" id="Qw1-pM-oie"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -85,7 +112,12 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a07-CE-8N4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="465" y="297"/>
+            <point key="canvasLocation" x="248" y="281.16000000000003"/>
         </scene>
     </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
 </document>

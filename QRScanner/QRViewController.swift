@@ -92,7 +92,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	//the video orientation is bound to the interface orientation
 	func updateViewDisplayAccordingToOrientation(orientation: UIInterfaceOrientation) {
 		if captureOutput.connectionWithMediaType(AVMediaTypeVideo) == nil {println("No video connection for \(captureOutput)"); return}
+		println("Is video mirrored: \(captureOutput.connectionWithMediaType(AVMediaTypeVideo).videoMirrored) - Changing from \(captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation.rawValue) to \(AVCaptureVideoOrientation(rawValue: orientation.rawValue)!.rawValue)")
 		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!
+		//distinction between iOS7 and iOS8
 
 		var angle: CGFloat = 0.0;
 		switch (orientation) {
@@ -100,9 +102,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			angle = 0
 		case .PortraitUpsideDown:
 			angle = CGFloat(M_PI)
-		case .LandscapeLeft:
-			angle = CGFloat(M_PI_2)
 		case .LandscapeRight:
+			angle = CGFloat(M_PI_2)
+		case .LandscapeLeft:
 			angle = CGFloat(M_PI+M_PI_2)
 		default:
 			break;
@@ -121,11 +123,13 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 		coordinator.animateAlongsideTransition({ (_) -> Void in
 			self.willAnimateRotationToInterfaceOrientation(toOrientation!, duration: 0.3)
+//			self.updateViewDisplayAccordingToOrientation(toOrientation!)
 		}, completion: { (_) -> Void in
-			self.didRotateFromInterfaceOrientation(toOrientation!)
+//			self.didRotateFromInterfaceOrientation(toOrientation!)
 		})
 	}
 	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+		super.willAnimateRotationToInterfaceOrientation(toInterfaceOrientation, duration: duration)
 		self.updateViewDisplayAccordingToOrientation(toInterfaceOrientation)
 	}
 
@@ -215,8 +219,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		var string = String()
 		for qrv:QRCorners in corners {
 			if touchedView == qrv.view {
-				//TODO: Send command and historize?
-				UIApplication.sharedApplication().openURL(NSURL(string: qrv.qrstring)!);
+				var entry = HistoryEntry()
+				entry.string = qrv.qrstring
+				entry.date = NSDate()
+				history.saveInfo([entry])
+//				UIApplication.sharedApplication().openURL(NSURL(string: qrv.qrstring)!);
 			}
 		}
 	}
