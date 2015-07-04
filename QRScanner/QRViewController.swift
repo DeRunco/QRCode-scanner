@@ -92,22 +92,22 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	//the video orientation is bound to the interface orientation
 	func updateViewDisplayAccordingToOrientation(orientation: UIInterfaceOrientation) {
 		if captureOutput.connectionWithMediaType(AVMediaTypeVideo) == nil {println("No video connection for \(captureOutput)"); return}
-		println("Is video mirrored: \(captureOutput.connectionWithMediaType(AVMediaTypeVideo).videoMirrored) - Changing from \(captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation.rawValue) to \(AVCaptureVideoOrientation(rawValue: orientation.rawValue)!.rawValue)")
-		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = AVCaptureVideoOrientation(rawValue: orientation.rawValue)!
-		//distinction between iOS7 and iOS8
+		var videoOrientation :AVCaptureVideoOrientation
+		switch (orientation) {
+		case .Portrait: videoOrientation = AVCaptureVideoOrientation.Portrait
+		case .LandscapeLeft: videoOrientation = AVCaptureVideoOrientation.LandscapeLeft
+		case .LandscapeRight: videoOrientation = AVCaptureVideoOrientation.LandscapeRight
+		case .PortraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.PortraitUpsideDown
+		case .Unknown: videoOrientation = AVCaptureVideoOrientation.Portrait
+		}
+		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = videoOrientation
 
 		var angle: CGFloat = 0.0;
-		switch (orientation) {
-		case .Portrait:
-			angle = 0
-		case .PortraitUpsideDown:
-			angle = CGFloat(M_PI)
-		case .LandscapeRight:
-			angle = CGFloat(M_PI_2)
-		case .LandscapeLeft:
-			angle = CGFloat(M_PI+M_PI_2)
-		default:
-			break;
+		switch (videoOrientation) {
+		case .Portrait: angle = 0
+		case .PortraitUpsideDown: angle = CGFloat(M_PI)
+		case .LandscapeLeft: angle = CGFloat(M_PI_2)
+		case .LandscapeRight: angle = CGFloat(M_PI+M_PI_2)
 		}
 
 		var trans = CATransform3DConcat(CATransform3DIdentity, CATransform3DMakeRotation(angle, 0, 0, -1))
@@ -123,9 +123,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 		coordinator.animateAlongsideTransition({ (_) -> Void in
 			self.willAnimateRotationToInterfaceOrientation(toOrientation!, duration: 0.3)
-//			self.updateViewDisplayAccordingToOrientation(toOrientation!)
 		}, completion: { (_) -> Void in
-//			self.didRotateFromInterfaceOrientation(toOrientation!)
 		})
 	}
 	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
