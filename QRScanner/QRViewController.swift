@@ -33,7 +33,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	let captureOutput = AVCaptureVideoDataOutput()
 	var videoPreviewLayer : AVCaptureVideoPreviewLayer!
 	var isReading: Bool = false
-	var corners :[QRCorners] = [QRCorners]()
+	var corners :[QRView] = [QRView]()
 	var historyController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("HistoryController") as! HistoryController
 
 	@IBOutlet var preview: UIView!
@@ -79,8 +79,8 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		// Initialize the video preview layer and add it as a sublayer to the viewPreview view's layer.
 
 		videoPreviewLayer  = AVCaptureVideoPreviewLayer(session: captureSession)
-		videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-		videoPreviewLayer.contentsGravity = kCAGravityResizeAspectFill;
+		videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+		videoPreviewLayer.contentsGravity = kCAGravityResizeAspectFill
 		preview.layer.addSublayer(videoPreviewLayer)
 		preview.layer.borderColor = UIColor.orangeColor().CGColor
 		preview.layer.borderWidth = 1
@@ -98,20 +98,18 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		case .LandscapeLeft: videoOrientation = AVCaptureVideoOrientation.LandscapeLeft
 		case .LandscapeRight: videoOrientation = AVCaptureVideoOrientation.LandscapeRight
 		case .PortraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.PortraitUpsideDown
-		case .Unknown: videoOrientation = AVCaptureVideoOrientation.Portrait
+		case .Unknown: videoOrientation = captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation
 		}
 		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = videoOrientation
 
-		var angle: CGFloat = 0.0;
+		var angle: CGFloat = 0.0
 		switch (videoOrientation) {
 		case .Portrait: angle = 0
 		case .PortraitUpsideDown: angle = CGFloat(M_PI)
-		case .LandscapeLeft: angle = CGFloat(M_PI_2)
-		case .LandscapeRight: angle = CGFloat(M_PI+M_PI_2)
+		case .LandscapeRight: angle = CGFloat(M_PI_2)
+		case .LandscapeLeft: angle = CGFloat(M_PI+M_PI_2)
 		}
-
-		var trans = CATransform3DConcat(CATransform3DIdentity, CATransform3DMakeRotation(angle, 0, 0, -1))
-		videoPreviewLayer.transform = trans
+		preview.transform = CGAffineTransformMakeRotation(angle)
 	}
 
 	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -153,10 +151,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 	override func viewDidDisappear(animated: Bool) {
 		for var i = self.corners.count - 1 ; i >= 0; --i {
-			self.corners[i].removeFromParentViewController()
-			self.corners[i].view.removeFromSuperview()
+			self.corners[i].removeFromSuperview()
 		}
-		corners = [QRCorners]()
+		corners = [QRView]()
 	}
 
 	func isSameOrientation(videoOrientation: AVCaptureVideoOrientation, interfaceOrientation: UIInterfaceOrientation) -> Bool{
@@ -174,19 +171,18 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				var object = metadataObjects[i] as! AVMetadataMachineReadableCodeObject
 				if (object.type == nil ) {continue}
 				if (object.type! != AVMetadataObjectTypeQRCode ) {continue}
-
-				var index :QRCorners
+				object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(object) as! AVMetadataMachineReadableCodeObject
+				var index: QRView
 				if self.corners.count <= i {
-					index = QRCorners(nibName: nil, bundle: nil)
-					self.addChildViewController(index)
-					self.preview.addSubview(index.view)
+					index = QRView()
+					index.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.3)
+					self.preview.addSubview(index)
 					self.corners.append(index)
 				} else {
 					index = self.corners[i]
 				}
-				let hasSameOrientation = self.isSameOrientation(connection.videoOrientation, interfaceOrientation: self.interfaceOrientation)
-				index.qrstring = object.stringValue//.stringByRemovingPercentEncoding!
-				index.setCorners(object.corners as! [CFDictionary], withOrientation:hasSameOrientation, fromPreview:self.preview)
+				
+				index.frame = self.preview.convertRect(object.bounds, toView: self.preview)
 			}
 		})
 	}
@@ -195,7 +191,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		var label = UILabel()
 		label.text = mess
 		label.numberOfLines = 0
-		label.font = UIFont.systemFontOfSize(24);
+		label.font = UIFont.systemFontOfSize(24)
 		label.backgroundColor = UIColor.redColor()
 		label.textColor = UIColor.whiteColor()
 		let size = label.sizeThatFits(CGSizeMake(self.view.bounds.size.width, 200))
@@ -215,13 +211,12 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		var touchedView = preview.hitTest(touchLocation, withEvent: event)
 		if  touchedView == nil { return }
 		var string = String()
-		for qrv:QRCorners in corners {
-			if touchedView == qrv.view {
+		for qrv:QRView in corners {
+			if touchedView == qrv {
 				var entry = HistoryEntry()
-				entry.string = qrv.qrstring
 				entry.date = NSDate()
 				history.saveInfo([entry])
-//				UIApplication.sharedApplication().openURL(NSURL(string: qrv.qrstring)!);
+				UIApplication.sharedApplication().openURL(NSURL(string: qrv.qrString)!)
 			}
 		}
 	}
