@@ -141,8 +141,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		if (videoPreviewLayer == nil) {return}
 		videoPreviewLayer.frame = preview.layer.bounds
 		
-//		UIViewController.attemptRotationToDeviceOrientation()
-//		self.updateViewDisplayAccordingToOrientation(self.interfaceOrientation)
 	}
 
 	override func shouldAutorotate() -> Bool {
@@ -183,13 +181,13 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				var index: QRView
 				if self.corners.count <= i {
 					index = QRView()
-					index.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.3)
+					index.backgroundColor = UIColor.clearColor()
 					self.preview.addSubview(index)
 					self.corners.append(index)
 				} else {
 					index = self.corners[i]
 				}
-
+				
 				var arrayOfPoints = [CGPoint]()
 				for var j = 0; j < object.corners.count; j++ {
 					var newPoint = CGPointZero
@@ -198,7 +196,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 					println("point \(j), \(newPoint)")
 					arrayOfPoints.append(self.preview.convertPoint(newPoint, toView: self.preview))
 				}
-				
+				index.qrString = object.stringValue
 				index.updateLocation(self.preview.convertRect(object.bounds, toView: self.preview), corners: arrayOfPoints)
 			}
 		})
@@ -220,24 +218,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	func hideError(timer: NSTimer) {
 		(timer.userInfo!["view"]! as! UILabel).removeFromSuperview()
 	}
-
-	override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) -> (){
-		var thatOneTouch = touches.first as! UITouch!
-		if thatOneTouch == nil { return }
-		var touchLocation = thatOneTouch.locationInView(preview)
-		var touchedView = preview.hitTest(touchLocation, withEvent: event)
-		if  touchedView == nil { return }
-		var string = String()
-		for qrv:QRView in corners {
-			if touchedView == qrv {
-				var entry = HistoryEntry()
-				entry.date = NSDate()
-				history.saveInfo([entry])
-				UIApplication.sharedApplication().openURL(NSURL(string: qrv.qrString)!)
-			}
-		}
-	}
-
+	
 	@IBAction func showHistory() {
 		self.presentViewController(self.historyController, animated: true, completion: nil)
 	}
