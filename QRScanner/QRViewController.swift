@@ -93,6 +93,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	func updateViewDisplayAccordingToOrientation(orientation: UIInterfaceOrientation) {
 		if captureOutput.connectionWithMediaType(AVMediaTypeVideo) == nil {println("No video connection for \(captureOutput)"); return}
 		var videoOrientation :AVCaptureVideoOrientation
+
 		switch (orientation) {
 		case .Portrait: videoOrientation = AVCaptureVideoOrientation.Portrait
 		case .LandscapeLeft: videoOrientation = AVCaptureVideoOrientation.LandscapeLeft
@@ -100,16 +101,22 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		case .PortraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.PortraitUpsideDown
 		case .Unknown: videoOrientation = captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation
 		}
-		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = videoOrientation
+		//pretty sure the connection rotation is net needed since we are not capturing
+		//captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = videoOrientation
 
 		var angle: CGFloat = 0.0
 		switch (videoOrientation) {
 		case .Portrait: angle = 0
 		case .PortraitUpsideDown: angle = CGFloat(M_PI)
 		case .LandscapeRight: angle = CGFloat(M_PI_2)
-		case .LandscapeLeft: angle = CGFloat(M_PI+M_PI_2)
+		case .LandscapeLeft: angle = CGFloat(-M_PI_2)
 		}
+		
+		//disabling animation because of a 0 to 270 to 90 makes the view spin what appears to be multiple times :barf:
+		UIView.setAnimationsEnabled(false)
+		preview.transform = CGAffineTransformIdentity
 		preview.transform = CGAffineTransformMakeRotation(angle)
+		UIView.setAnimationsEnabled(true)
 	}
 
 	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -121,9 +128,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 		coordinator.animateAlongsideTransition({ (_) -> Void in
 			self.willAnimateRotationToInterfaceOrientation(toOrientation!, duration: 0.3)
-		}, completion: { (_) -> Void in
-		})
+			}, completion: nil)
 	}
+	
 	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
 		super.willAnimateRotationToInterfaceOrientation(toInterfaceOrientation, duration: duration)
 		self.updateViewDisplayAccordingToOrientation(toInterfaceOrientation)
@@ -131,10 +138,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		if (videoPreviewLayer == nil) {return}//we are on simulator
-
+		if (videoPreviewLayer == nil) {return}
 		videoPreviewLayer.frame = preview.layer.bounds
-		self.updateViewDisplayAccordingToOrientation(self.interfaceOrientation)
+		
+//		UIViewController.attemptRotationToDeviceOrientation()
+//		self.updateViewDisplayAccordingToOrientation(self.interfaceOrientation)
 	}
 
 	override func shouldAutorotate() -> Bool {
@@ -181,8 +189,17 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				} else {
 					index = self.corners[i]
 				}
+
+				var arrayOfPoints = [CGPoint]()
+				for var j = 0; j < object.corners.count; j++ {
+					var newPoint = CGPointZero
+					var pointDict = object.corners[j] as? NSDictionary
+					CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
+					println("point \(j), \(newPoint)")
+					arrayOfPoints.append(self.preview.convertPoint(newPoint, toView: self.preview))
+				}
 				
-				index.frame = self.preview.convertRect(object.bounds, toView: self.preview)
+				index.updateLocation(self.preview.convertRect(object.bounds, toView: self.preview), corners: arrayOfPoints)
 			}
 		})
 	}

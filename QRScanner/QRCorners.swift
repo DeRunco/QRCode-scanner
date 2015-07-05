@@ -8,29 +8,15 @@
 
 import UIKit
 
-func angleOffset() -> CGFloat
-{
-	var angle:CGFloat = 0;
-	switch (UIDevice.currentDevice().orientation) {
-	case .Portrait:
-		angle = 0;
-	case .PortraitUpsideDown:
-		angle = CGFloat(M_PI);
-	case .LandscapeRight:
-		angle = CGFloat(M_PI+M_PI_2);
-	case .LandscapeLeft:
-		angle = CGFloat(M_PI_2);
-	default:
-		break;
-	}
-	return angle;
-}
-
-
 let QRWidth:CGFloat = 100
 let QRCornerRadius:CGFloat = 10
 
 class QRView: UIView {
 	var qrString: String = ""
+	var points: [CGPoint]!
 	
+	func updateLocation(frame: CGRect, corners: [CGPoint]) {
+		self.frame = frame
+		self.points = corners
+	}
 }
