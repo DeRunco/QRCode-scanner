@@ -13,7 +13,6 @@
 		562DCB431B45345100A95D2C /* QRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3D1B45345100A95D2C /* QRViewController.swift */; };
 		562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB561B457BC700A95D2C /* LaunchScreen.xib */; };
 		56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A1D58C1B46B52C00EA9336 /* Images.xcassets */; };
-		56A1D5901B46B83E00EA9336 /* Main~ipad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB591B457C5400A95D2C /* Main~ipad.storyboard */; };
 		56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB551B457BC700A95D2C /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -26,7 +25,6 @@
 		562DCB3D1B45345100A95D2C /* QRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRViewController.swift; sourceTree = "<group>"; };
 		562DCB551B457BC700A95D2C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		562DCB561B457BC700A95D2C /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
-		562DCB591B457C5400A95D2C /* Main~ipad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Main~ipad.storyboard"; sourceTree = "<group>"; };
 		56A1D58C1B46B52C00EA9336 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -64,7 +62,6 @@
 				562DCB3C1B45345100A95D2C /* QRCorners.swift */,
 				562DCB3D1B45345100A95D2C /* QRViewController.swift */,
 				562DCB151B45341C00A95D2C /* AppDelegate.swift */,
-				562DCB591B457C5400A95D2C /* Main~ipad.storyboard */,
 				562DCB551B457BC700A95D2C /* Main.storyboard */,
 				562DCB561B457BC700A95D2C /* LaunchScreen.xib */,
 				56A1D58C1B46B52C00EA9336 /* Images.xcassets */,
@@ -112,7 +109,7 @@
 				TargetAttributes = {
 					562DCB0F1B45341C00A95D2C = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = XG4464Q5HT;
+						DevelopmentTeam = WDH9UWSA4G;
 					};
 				};
 			};
@@ -139,7 +136,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56A1D5901B46B83E00EA9336 /* Main~ipad.storyboard in Resources */,
 				56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */,
 				56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */,
 				562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */,
