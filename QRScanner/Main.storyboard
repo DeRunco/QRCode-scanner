@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -34,16 +35,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WD3-wT-biO" customClass="UIViewResize" customModule="QRScanner" customModuleProvider="target">
-                                <rect key="frame" x="4" y="68" width="592" height="528"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                 <color key="backgroundColor" red="0.96470588239999999" green="0.53725490200000003" blue="0.12941176469999999" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="WD3-wT-biO" secondAttribute="bottom" constant="4" id="51L-EX-abT"/>
-                            <constraint firstAttribute="trailing" secondItem="WD3-wT-biO" secondAttribute="trailing" constant="4" id="PBE-i7-p0y"/>
-                            <constraint firstItem="WD3-wT-biO" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="4" id="Xec-Rs-b27"/>
-                            <constraint firstItem="WD3-wT-biO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="4" id="bLN-Of-FwN"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="WD3-wT-biO" secondAttribute="bottom" id="51L-EX-abT"/>
+                            <constraint firstAttribute="trailing" secondItem="WD3-wT-biO" secondAttribute="trailing" id="PBE-i7-p0y"/>
+                            <constraint firstItem="WD3-wT-biO" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Xec-Rs-b27"/>
+                            <constraint firstItem="WD3-wT-biO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="bLN-Of-FwN"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="QR Scanner" id="GBr-Iq-9S4">
@@ -59,7 +60,68 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-197" y="305"/>
+            <point key="canvasLocation" x="-206" y="297"/>
+        </scene>
+        <!--History Overlay View Controller-->
+        <scene sceneID="Nqc-95-B2q">
+            <objects>
+                <viewController storyboardIdentifier="QRHistoryOverlayViewController" id="obD-Bc-p06" customClass="QRHistoryOverlayViewController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="aQD-C3-ePg"/>
+                        <viewControllerLayoutGuide type="bottom" id="hsz-FI-Xwr"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="VPF-4c-kEX">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lyt-tX-INh">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xp6-pR-2Zf">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="bXY-RT-Er1"/>
+                                    <barButtonItem title="Launch" id="ABu-Bv-y0a">
+                                        <connections>
+                                            <action selector="validate" destination="obD-Bc-p06" id="SbT-X9-LyA"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="PvY-rw-fgP"/>
+                                    <barButtonItem title="AddToHistory" id="xRl-dD-Bhi">
+                                        <connections>
+                                            <action selector="updateHistory" destination="obD-Bc-p06" id="9mk-UE-dUp"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="uiA-5w-maQ"/>
+                                    <barButtonItem title="Cancel" id="SxT-eV-tdh">
+                                        <connections>
+                                            <action selector="cancel" destination="obD-Bc-p06" id="VPv-on-WO5"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="B10-nO-Fxr"/>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.20000000000000001" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="hsz-FI-Xwr" firstAttribute="top" secondItem="xp6-pR-2Zf" secondAttribute="bottom" id="0Xe-Gr-hGC"/>
+                            <constraint firstItem="Lyt-tX-INh" firstAttribute="top" secondItem="VPF-4c-kEX" secondAttribute="topMargin" id="DVD-gm-Hc6"/>
+                            <constraint firstAttribute="trailing" secondItem="Lyt-tX-INh" secondAttribute="trailing" id="SdE-rj-fEx"/>
+                            <constraint firstItem="xp6-pR-2Zf" firstAttribute="leading" secondItem="VPF-4c-kEX" secondAttribute="leading" id="YF8-Vx-jUR"/>
+                            <constraint firstAttribute="trailing" secondItem="xp6-pR-2Zf" secondAttribute="trailing" id="myd-Te-pVl"/>
+                            <constraint firstItem="Lyt-tX-INh" firstAttribute="leading" secondItem="VPF-4c-kEX" secondAttribute="leading" id="oQb-ug-rVt"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="qrstring" destination="Lyt-tX-INh" id="kBM-p6-xxg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BCg-Aa-746" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="465" y="1042"/>
         </scene>
         <!--HistoryController-->
         <scene sceneID="bKL-qZ-Zeg">
@@ -76,13 +138,13 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RFn-Nu-2SD">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="33"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qYI-n3-9fn">
-                                            <rect key="frame" x="558" y="34" width="42" height="21"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qYI-n3-9fn">
+                                            <rect key="frame" x="569" y="40" width="31" height="15"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>

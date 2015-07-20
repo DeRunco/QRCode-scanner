@@ -32,11 +32,13 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	var captureSession : AVCaptureSession!
 	let captureOutput = AVCaptureVideoDataOutput()
 	var videoPreviewLayer : AVCaptureVideoPreviewLayer!
-	var currentLayerRotation: CATransform3D = CATransform3DIdentity
-	var isReading: Bool = false
-	var corners :[QRLayer] = [QRLayer]()
+	var currentLayerRotation : CATransform3D = CATransform3DIdentity
+	weak var selectedLayer : QRLayer?
+	var layers : [QRLayer] = [QRLayer]()
 	var message = UILabel()
-	@IBOutlet var preview: UIView!
+	@IBOutlet var preview : UIView!
+	var isScanning = true
+	var qrOverlay : QRHistoryOverlayViewController!
 
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
@@ -47,7 +49,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		super.viewDidLoad()
 		message.alpha = 0
 		self.view.addSubview(message)
-//		self.preview.setTranslatesAutoresizingMaskIntoConstraints(true);
 		var error:NSErrorPointer = NSErrorPointer()
 		// Get an instance of the AVCaptureDevice class to initialize a device object and provide the video
 		// as the media type parameter.
@@ -83,6 +84,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 		videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
 		videoPreviewLayer.contentsGravity = kCAGravityResizeAspectFill
+		//setup the view displaying the preview layer
 		preview.layer.addSublayer(videoPreviewLayer)
 		preview.layer.borderColor = UIColor.orangeColor().CGColor
 		preview.layer.borderWidth = 1
@@ -102,7 +104,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		case .PortraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.PortraitUpsideDown
 		case .Unknown: videoOrientation = captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation
 		}
-		//pretty sure the connection rotation is net needed since we are not capturing
+		//pretty sure the connection rotation is not needed since we are not actually using the content.
 		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = videoOrientation
 
 		var angle: CGFloat = 0.0
@@ -147,32 +149,19 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		
 	}
 
-	override func shouldAutorotate() -> Bool {
-		return (self.view.bounds.width > self.view.bounds.height)
-	}
-
 	override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
 		return UIInterfaceOrientation.Portrait
 	}
 
-	override func supportedInterfaceOrientations() -> Int {
-		return Int(UIInterfaceOrientationMask.Portrait.rawValue)
-	}
-
 	override func viewDidDisappear(animated: Bool) {
-		for var i = self.corners.count - 1 ; i >= 0; --i {
-			self.corners[i].removeFromSuperlayer()
+		for var i = self.layers.count - 1 ; i >= 0; --i {
+			self.layers[i].removeFromSuperlayer()
 		}
-		corners = [QRLayer]()
-	}
-
-	func isSameOrientation(videoOrientation: AVCaptureVideoOrientation, interfaceOrientation: UIInterfaceOrientation) -> Bool{
-		let isInterfaceLandscape = UIInterfaceOrientationIsLandscape(interfaceOrientation)
-		let isPictureLandscape = (videoOrientation == AVCaptureVideoOrientation.LandscapeLeft || videoOrientation == AVCaptureVideoOrientation.LandscapeRight)
-		return isInterfaceLandscape == isPictureLandscape
+		layers = [QRLayer]()
 	}
 
 	func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+		if !isScanning { return }
 		if metadataObjects == nil { return }
 		if metadataObjects.count ==  0 { return }
 		var i : Int = 0
@@ -183,25 +172,23 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				if (object.type! != AVMetadataObjectTypeQRCode ) {continue}
 				object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(object) as! AVMetadataMachineReadableCodeObject
 				var index: QRLayer
-				if self.corners.count <= i {
+				if self.layers.count <= i {
 					index = QRLayer()
 					self.preview.layer.addSublayer(index)
-					self.corners.append(index)
+					self.layers.append(index)
 				} else {
-					index = self.corners[i]
+					index = self.layers[i]
 				}
-				
+				self.updateSelectedLayer()
 				var arrayOfPoints = [CGPoint]()
 				for var j = 0; j < object.corners.count; j++ {
 					var newPoint = CGPointZero
 					var pointDict = object.corners[j] as? NSDictionary
 					CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
-//					arrayOfPoints.append(self.preview.convertPoint(newPoint, toView: self.preview))
-					arrayOfPoints.append(self.preview.layer.convertPoint(newPoint, toLayer: self.videoPreviewLayer))
+					newPoint = self.videoPreviewLayer.convertPoint(newPoint, fromLayer: self.preview.layer)
+					arrayOfPoints.append(newPoint)
 				}
 				index.qrString = object.stringValue
-
-//				index.updateLocation(self.preview.convertRect(object.bounds, toView: self.preview), corners: arrayOfPoints)
 				index.updateLocation(self.preview.layer.convertRect(object.bounds, toLayer: self.videoPreviewLayer), corners: arrayOfPoints)
 			}
 		})
@@ -222,28 +209,67 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	func hideMessage(timer: NSTimer) {
 		(timer.userInfo!["view"]! as! UILabel).alpha = 0
 	}
+
 	override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
-
+		if self.qrOverlay != nil{
+			self.removeOverlay(self.qrOverlay, openURL: nil);
+		}
 		for touch in touches as! Set<UITouch>{
-
 			let touchPoint = touch.locationInView(self.view)
-
 			for layer in self.preview.layer.sublayers as! [CALayer] {
 				let convertedPoint = self.view.layer.convertPoint(touchPoint, toLayer: layer)
 
 				if !(layer is QRLayer) {continue}
-				println("Touching at \(convertedPoint)")
 				if CGPathContainsPoint((layer as! QRLayer).path, nil, convertedPoint, true) {
-					println("Touching the layer");
 					let url = NSURL(string: (layer as! QRLayer).qrString)
 					if (url == nil) {
 						self.displayMessage("No URL", time: 1)
 						continue
 					}
-					UIApplication.sharedApplication().openURL(url!)
+					self.selectedLayer = (layer as! QRLayer)
+
+					let newHistory = HistoryEntry()
+					newHistory.string = (layer as! QRLayer).qrString
+					newHistory.date = NSDate()
+					self.displayOverlay(newHistory)
+					//TODO add the history entry
 					return //no need to continue parsing throught the available QR
 				}
 			}
+		}
+	}
+
+	func updateSelectedLayer() {
+		if let selectLayer = self.selectedLayer {
+			for layer in self.layers {
+				layer.isSelected = (selectLayer.qrString == layer.qrString)
+			}
+		}
+	}
+
+
+	func displayOverlay(newHistory: HistoryEntry) {
+		if let overlay = self.qrOverlay {
+			return
+		}
+		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
+		self.qrOverlay.historyToDisplay = newHistory
+		self.addChildViewController(self.qrOverlay)
+		self.qrOverlay.view.frame = self.preview.frame
+		self.view.addSubview(self.qrOverlay.view)
+	}
+
+	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {
+		if self.qrOverlay == vc {
+			self.qrOverlay = nil
+			self.selectedLayer = nil
+		}
+		self.updateSelectedLayer()
+		vc.removeFromParentViewController()
+		vc.view.removeFromSuperview()
+		if openURL != nil {
+			let url = NSURL(string: openURL!)
+			UIApplication.sharedApplication().openURL(url!)
 		}
 	}
 }

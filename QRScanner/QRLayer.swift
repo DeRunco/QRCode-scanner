@@ -15,12 +15,15 @@ class QRLayer: CAShapeLayer {
 	var qrString: String = ""
 	var points: [CGPoint]!
 	var timer: NSTimer!
-	
+	/// This field tells the layer that the currently selected QR has the same textfield as the QR covered by this layer.
+	var isSelected = false
+	var isSelectable = false
+
 	func updateLocation(frame: CGRect, corners: [CGPoint]) {
 		self.frame = frame
 		self.points = corners
 		self.frame = self.bounds
-		self.fillColor = UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).CGColor
+		self.fillColor = self.isSelected ? UIColor(red: 0, green: 0.6, blue: 0.4, alpha: 0.75).CGColor: UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).CGColor
 		var path = CGPathCreateMutable()
 		CGPathMoveToPoint(path, nil, corners[0].x - self.frame.origin.x, corners[0].y - self.frame.origin.y)
 		CGPathAddLineToPoint(path, nil, corners[1].x - self.frame.origin.x, corners[1].y - self.frame.origin.y)
@@ -38,18 +41,4 @@ class QRLayer: CAShapeLayer {
 		}
 		self.fillColor = UIColor.clearColor().CGColor
 	}
-	
-//	override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-//		return CGPathContainsPoint(self.mask.path, nil, point, true)
-//	}
-
-	
-	//could be moved to the touchesWhatever of each subviews
-//	override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) -> (){
-//		var entry = HistoryEntry()
-//		entry.date = NSDate()
-//		entry.string = self.qrString
-//		history.saveInfo([entry])
-//		UIApplication.sharedApplication().openURL(NSURL(string: self.qrString)!)
-//	}
 }

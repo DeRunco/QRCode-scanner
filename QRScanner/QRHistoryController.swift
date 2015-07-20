@@ -17,7 +17,7 @@ class HistoryControllerCell: UITableViewCell {
 	@IBOutlet weak var detail: UILabel!
 }
 
-class HistoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
+class QRHistoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
 
 	func removeEntry(index: Int) {
 		history.cachedHistory.removeAtIndex(index)
