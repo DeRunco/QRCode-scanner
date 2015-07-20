@@ -168,28 +168,32 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		dispatch_async(dispatch_get_main_queue(), { () -> Void in
 			for ; i < metadataObjects.count ; i++ {
 				var object = metadataObjects[i] as! AVMetadataMachineReadableCodeObject
-				if (object.type == nil ) {continue}
-				if (object.type! != AVMetadataObjectTypeQRCode ) {continue}
-				object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(object) as! AVMetadataMachineReadableCodeObject
-				var index: QRLayer
-				if self.layers.count <= i {
-					index = QRLayer()
-					self.preview.layer.addSublayer(index)
-					self.layers.append(index)
-				} else {
-					index = self.layers[i]
+				if let type = object.type {
+					if type != AVMetadataObjectTypeQRCode {
+						return
+					}
+					object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(object) as! AVMetadataMachineReadableCodeObject
+					var index: QRLayer
+					if self.layers.count <= i {
+						index = QRLayer()
+						self.preview.layer.addSublayer(index)
+						self.layers.append(index)
+					} else {
+						index = self.layers[i]
+					}
+					var arrayOfPoints = [CGPoint]()
+					for var j = 0; j < object.corners.count; j++ {
+						var newPoint = CGPointZero
+						var pointDict = object.corners[j] as? NSDictionary
+						CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
+						newPoint = self.videoPreviewLayer.superlayer!.convertPoint(newPoint, fromLayer: self.videoPreviewLayer)
+						arrayOfPoints.append(newPoint)
+					}
+					index.qrString = object.stringValue
+					var newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
+					index.updateLocation(newRect, corners: arrayOfPoints)
+					self.updateSelectedLayer()
 				}
-				self.updateSelectedLayer()
-				var arrayOfPoints = [CGPoint]()
-				for var j = 0; j < object.corners.count; j++ {
-					var newPoint = CGPointZero
-					var pointDict = object.corners[j] as? NSDictionary
-					CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
-					newPoint = self.videoPreviewLayer.convertPoint(newPoint, fromLayer: self.preview.layer)
-					arrayOfPoints.append(newPoint)
-				}
-				index.qrString = object.stringValue
-				index.updateLocation(self.preview.layer.convertRect(object.bounds, toLayer: self.videoPreviewLayer), corners: arrayOfPoints)
 			}
 		})
 	}
@@ -246,7 +250,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			}
 		}
 	}
-
 
 	func displayOverlay(newHistory: HistoryEntry) {
 		if let overlay = self.qrOverlay {
