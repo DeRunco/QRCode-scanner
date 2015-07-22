@@ -8,9 +8,14 @@
 
 import UIKit
 
+//history is kept as a global variable. should be done better...
 let historyCellId = "HistoryCellID"
 
-//history is kept as a global variable. should be done better...
+//This notification is fired on selecting a line while not editing
+let kEntrySelectedFromHistoryNotification = "EntrySelectedFromHistory"
+let kEntryUserInfo = "entry"
+
+
 
 class HistoryControllerCell: UITableViewCell {
 	@IBOutlet weak var title: UILabel!
@@ -64,6 +69,14 @@ class QRHistoryController: UITableViewController, UITableViewDelegate, UITableVi
 			history.loadInfo()
 			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
 		}
+	}
+
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		if tableView.editing {return}
+		tableView.deselectRowAtIndexPath(indexPath, animated: true)
+		//display the overlay
+		let entry = history.cachedHistory[indexPath.row]
+		NSNotificationCenter.defaultCenter().postNotificationName(kEntrySelectedFromHistoryNotification, object: nil, userInfo:[kEntryUserInfo:entry])
 	}
 
 	func refreshHistory(sender: AnyObject!) {

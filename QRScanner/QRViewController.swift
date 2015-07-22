@@ -89,6 +89,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		preview.clipsToBounds = false
 		captureSession.startRunning()
 		if (videoPreviewLayer == nil) {println("Running on the simulator"); return}
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "displayOverlayFromHistory:", name: kEntrySelectedFromHistoryNotification, object: nil)
 	}
 
 	//the video orientation is bound to the interface orientation
@@ -245,6 +246,15 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		if let selectLayer = self.selectedLayer {
 			for layer in self.layers {
 				layer.isSelected = (selectLayer.qrString == layer.qrString)
+			}
+		}
+	}
+
+	func displayOverlayFromHistory(notification: NSNotification) {
+		self.navigationController!.popViewControllerAnimated(true)
+		if let userInfo = notification.userInfo as? [String:HistoryEntry] {
+			if let entry = userInfo[kEntryUserInfo] {
+				self.displayOverlay(entry)
 			}
 		}
 	}
