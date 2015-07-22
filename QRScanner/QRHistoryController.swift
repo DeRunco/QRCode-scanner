@@ -90,9 +90,16 @@ class QRHistoryController: UITableViewController, UITableViewDelegate, UITableVi
 
 	@IBAction func startEditMode(sender: AnyObject) {
 		if (self.tableView.editing){
+			if let butSender: UIBarButtonItem = sender as? UIBarButtonItem {
+				butSender.tintColor = nil
+			}
+
 			self.removeSelectedEntries();
 			self.tableView.setEditing(false, animated: true);
 		} else {
+			if let butSender: UIBarButtonItem = sender as? UIBarButtonItem {
+				butSender.tintColor = UIColor.redColor()
+			}
 			self.tableView.setEditing(true, animated: true);
 		}
 	}

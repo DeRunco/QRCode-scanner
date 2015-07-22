@@ -257,7 +257,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		self.qrOverlay.historyToDisplay = newHistory
 		self.addChildViewController(self.qrOverlay)
 		self.qrOverlay.view.frame = self.preview.frame
+		self.qrOverlay.view.frame.origin.y = self.qrOverlay.view.frame.size.height
 		self.view.addSubview(self.qrOverlay.view)
+		UIView.animateWithDuration(0.3, animations: { () -> Void in
+			self.qrOverlay.view.frame = self.preview.frame
+		})
 	}
 
 	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {
@@ -266,11 +270,15 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			self.selectedLayer = nil
 		}
 		self.updateSelectedLayer()
-		vc.removeFromParentViewController()
-		vc.view.removeFromSuperview()
-		if openURL != nil {
-			let url = NSURL(string: openURL!)
-			UIApplication.sharedApplication().openURL(url!)
+		UIView.animateWithDuration(0.3, animations: { () -> Void in
+			vc.view.frame.origin.y = vc.view.frame.size.height
+		}) { (_) -> Void in
+			vc.removeFromParentViewController()
+			vc.view.removeFromSuperview()
+			if openURL != nil {
+				let url = NSURL(string: openURL!)
+				UIApplication.sharedApplication().openURL(url!)
+			}
 		}
 	}
 }
