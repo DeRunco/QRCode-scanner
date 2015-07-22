@@ -50,7 +50,10 @@ class QRHistoryController: UITableViewController, UITableViewDelegate, UITableVi
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		var cell = tableView.dequeueReusableCellWithIdentifier(historyCellId, forIndexPath: indexPath) as! HistoryControllerCell
 		cell.title!.text = "\(history.cachedHistory[indexPath.row].string)"
-		cell.detail!.text = "\(history.cachedHistory[indexPath.row].date)"
+		var dateFor = NSDateFormatter()
+		dateFor.dateFormat = "YYYY-MM-dd HH:mm"
+		let dateDisplay = dateFor.stringFromDate(history.cachedHistory[indexPath.row].date)
+		cell.detail!.text = "\(dateDisplay)"
 		return cell
 	}
 
