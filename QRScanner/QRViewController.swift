@@ -25,8 +25,6 @@ class UIViewResize: UIView {
 	}
 }
 
-
-
 class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
 
 	var captureSession : AVCaptureSession!

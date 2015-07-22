@@ -126,7 +126,7 @@
         <!--HistoryController-->
         <scene sceneID="bKL-qZ-Zeg">
             <objects>
-                <tableViewController storyboardIdentifier="HistoryController" title="HistoryController" clearsSelectionOnViewWillAppear="NO" id="3kA-xC-wnc" customClass="HistoryController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="QRHistoryController" title="HistoryController" clearsSelectionOnViewWillAppear="NO" id="3kA-xC-wnc" customClass="QRHistoryController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="rnO-UI-VJA">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -170,7 +170,13 @@
                             <outlet property="delegate" destination="3kA-xC-wnc" id="JNk-Cz-RGr"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="History" id="9YA-Sc-5e3"/>
+                    <navigationItem key="navigationItem" title="History" id="9YA-Sc-5e3">
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="gal-SM-F4G">
+                            <connections>
+                                <action selector="startEditMode:" destination="3kA-xC-wnc" id="IGj-fe-UjY"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a07-CE-8N4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

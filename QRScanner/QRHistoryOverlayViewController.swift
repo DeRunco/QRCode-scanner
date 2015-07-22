@@ -43,7 +43,7 @@ class QRHistoryOverlayViewController: UIViewController {
 	}
 
 	@IBAction func updateHistory() {
-
+		history.saveInfo([self.historyToDisplay!]);
 	}
 
 }

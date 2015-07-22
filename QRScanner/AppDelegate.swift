@@ -13,7 +13,7 @@ let kHistoryStorage = "History Key"
 class HistoryEntry: NSObject, NSCoding {
 	var date: NSDate!
 	var string: String!
-
+	var deletionMark: Bool = false
 	override init() {
 		super.init()
 	}
@@ -21,11 +21,13 @@ class HistoryEntry: NSObject, NSCoding {
 	required init(coder aDecoder: NSCoder) {
 		self.date = aDecoder.decodeObjectForKey("date") as! NSDate
 		self.string = aDecoder.decodeObjectForKey("string") as! String
+		self.deletionMark = aDecoder.decodeBoolForKey("deletion")
 	}
 
 	func encodeWithCoder(aCoder: NSCoder) {
 		aCoder.encodeObject(date, forKey: "date")
 		aCoder.encodeObject(string, forKey: "string")
+		aCoder.encodeBool(deletionMark, forKey: "deletion")
 	}
 
 
@@ -45,21 +47,26 @@ class HistoryStorage {
 		if archivedHistory == nil { return }
 		let history = NSKeyedUnarchiver.unarchiveObjectWithData(archivedHistory) as! NSArray!
 		for var count = 0; count < history.count; count++ {
-			if let entry = history[count] as? HistoryEntry {
+			if let entry = history[count] as? HistoryEntry{
+				if (entry.deletionMark) {continue}
 				cachedHistory.append(entry)
 			}
 		}
 	}
 
+	func markRowForDeletion(row: Int){
+		self.cachedHistory[row].deletionMark = true
+	}
+
 	func saveInfo(entries:[HistoryEntry]!) {
 		if (entries != nil) {
 			for entry:HistoryEntry in entries {
-				entry.string = entry.string + "\(counter++)"
 				cachedHistory.append(entry)
 			}
 		}
 		var dataForm = NSKeyedArchiver.archivedDataWithRootObject(cachedHistory)
 		NSUserDefaults.standardUserDefaults().setObject(dataForm, forKey: kHistoryStorage)
+		NSUserDefaults.standardUserDefaults().synchronize()
 		self.loadInfo()
 	}
 }
@@ -68,7 +75,6 @@ let history = HistoryStorage()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-	var history = HistoryStorage()
 	var window: UIWindow?
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
