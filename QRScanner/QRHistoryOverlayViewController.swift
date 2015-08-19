@@ -18,8 +18,8 @@ class QRHistoryOverlayViewController: UIViewController {
 		qrstring.userInteractionEnabled = false
 		// Do any additional setup after loading the view.
 	}
-	override func viewDidAppear(animated: Bool) {
-		super.viewDidAppear(animated)
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
 		self.configureDisplay()
 	}
 	override func didReceiveMemoryWarning() {
