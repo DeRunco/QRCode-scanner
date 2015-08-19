@@ -192,6 +192,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 					var newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
 					index.updateLocation(newRect, corners: arrayOfPoints)
 					self.updateSelectedLayer()
+					index.lowerColors = (self.qrOverlay != nil)
 				}
 			}
 		})
@@ -245,7 +246,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	func updateSelectedLayer() {
 		if let selectLayer = self.selectedLayer {
 			for layer in self.layers {
-				layer.isSelected = (selectLayer.qrString == layer.qrString)
+
 			}
 		}
 	}

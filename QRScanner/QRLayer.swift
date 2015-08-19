@@ -16,14 +16,14 @@ class QRLayer: CAShapeLayer {
 	var points: [CGPoint]!
 	var timer: NSTimer!
 	/// This field tells the layer that the currently selected QR has the same textfield as the QR covered by this layer.
-	var isSelected = false
+	var lowerColors = false
 	var isSelectable = false
 
 	func updateLocation(frame: CGRect, corners: [CGPoint]) {
 		self.frame = frame
 		self.points = corners
 		self.frame = self.bounds
-		self.fillColor = self.isSelected ? UIColor(red: 0, green: 0.6, blue: 0.4, alpha: 0.75).CGColor: UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).CGColor
+		self.fillColor = lowerColors ? UIColor(red: 0.15, green: 0.15, blue: 0.65, alpha: 0.55).CGColor : UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).CGColor
 		var path = CGPathCreateMutable()
 		CGPathMoveToPoint(path, nil, corners[0].x - self.frame.origin.x, corners[0].y - self.frame.origin.y)
 		CGPathAddLineToPoint(path, nil, corners[1].x - self.frame.origin.x, corners[1].y - self.frame.origin.y)
