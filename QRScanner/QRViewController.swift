@@ -55,6 +55,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			return
 		}
 		var captureDevice:AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+		var bob = NSErrorPointer()
+		captureDevice.lockForConfiguration(bob)
+		captureDevice.focusMode = AVCaptureFocusMode.ContinuousAutoFocus
+		captureDevice.unlockForConfiguration()
 		// Get an instance of the AVCaptureDeviceInput class using the previous device object.
 		var input:AVCaptureDeviceInput! = AVCaptureDeviceInput.deviceInputWithDevice(captureDevice, error: error) as! AVCaptureDeviceInput?
 		if (input == nil) {
