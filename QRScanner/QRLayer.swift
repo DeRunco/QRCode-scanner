@@ -24,7 +24,7 @@ class QRLayer: CAShapeLayer {
 		self.points = corners
 		self.frame = self.bounds
 		self.fillColor = lowerColors ? UIColor(red: 0.15, green: 0.15, blue: 0.65, alpha: 0.55).CGColor : UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).CGColor
-		var path = CGPathCreateMutable()
+		let path = CGPathCreateMutable()
 		CGPathMoveToPoint(path, nil, corners[0].x - self.frame.origin.x, corners[0].y - self.frame.origin.y)
 		CGPathAddLineToPoint(path, nil, corners[1].x - self.frame.origin.x, corners[1].y - self.frame.origin.y)
 		CGPathAddLineToPoint(path, nil, corners[2].x - self.frame.origin.x, corners[2].y - self.frame.origin.y)

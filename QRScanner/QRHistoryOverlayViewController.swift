@@ -16,12 +16,10 @@ class QRHistoryOverlayViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		qrstring.userInteractionEnabled = false
+		self.configureDisplay()
 		// Do any additional setup after loading the view.
 	}
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		self.configureDisplay()
-	}
+
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
@@ -44,6 +42,11 @@ class QRHistoryOverlayViewController: UIViewController {
 
 	@IBAction func updateHistory() {
 		history.saveInfo([self.historyToDisplay!]);
+		let currentcolor = self.view.backgroundColor
+		self.view.backgroundColor = UIColor.whiteColor()
+		UIView.animateWithDuration(0.3, animations: { () -> Void in
+			self.view.backgroundColor = currentcolor
+		})
 	}
 
 }

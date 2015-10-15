@@ -107,6 +107,8 @@
 		562DCB081B45341C00A95D2C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = "Weemo, Inc";
 				TargetAttributes = {

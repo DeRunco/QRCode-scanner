@@ -18,7 +18,7 @@ class HistoryEntry: NSObject, NSCoding {
 		super.init()
 	}
 
-	required init(coder aDecoder: NSCoder) {
+	required init?(coder aDecoder: NSCoder) {
 		self.date = aDecoder.decodeObjectForKey("date") as! NSDate
 		self.string = aDecoder.decodeObjectForKey("string") as! String
 		self.deletionMark = aDecoder.decodeBoolForKey("deletion")
@@ -64,7 +64,8 @@ class HistoryStorage {
 				cachedHistory.append(entry)
 			}
 		}
-		var dataForm = NSKeyedArchiver.archivedDataWithRootObject(cachedHistory)
+		
+		let dataForm = NSKeyedArchiver.archivedDataWithRootObject(cachedHistory)
 		NSUserDefaults.standardUserDefaults().setObject(dataForm, forKey: kHistoryStorage)
 		NSUserDefaults.standardUserDefaults().synchronize()
 		self.loadInfo()

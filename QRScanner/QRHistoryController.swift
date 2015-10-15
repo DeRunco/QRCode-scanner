@@ -22,7 +22,7 @@ class HistoryControllerCell: UITableViewCell {
 	@IBOutlet weak var detail: UILabel!
 }
 
-class QRHistoryController: UITableViewController, UITableViewDelegate, UITableViewDataSource {
+class QRHistoryController: UITableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -48,9 +48,9 @@ class QRHistoryController: UITableViewController, UITableViewDelegate, UITableVi
 	}
 
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		var cell = tableView.dequeueReusableCellWithIdentifier(historyCellId, forIndexPath: indexPath) as! HistoryControllerCell
+		let cell = tableView.dequeueReusableCellWithIdentifier(historyCellId, forIndexPath: indexPath) as! HistoryControllerCell
 		cell.title!.text = "\(history.cachedHistory[indexPath.row].string)"
-		var dateFor = NSDateFormatter()
+		let dateFor = NSDateFormatter()
 		dateFor.dateFormat = "YYYY-MM-dd HH:mm"
 		let dateDisplay = dateFor.stringFromDate(history.cachedHistory[indexPath.row].date)
 		cell.detail!.text = "\(dateDisplay)"
@@ -89,11 +89,15 @@ class QRHistoryController: UITableViewController, UITableViewDelegate, UITableVi
 	}
 
 	@IBAction func showScanner (sender: AnyObject) {
-		self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.PrimaryHidden
+		if #available(iOS 8.0, *) {
+		    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.PrimaryHidden
+		} else {
+		    // Fallback on earlier versions
+		}
 	}
 
 	func removeSelectedEntries() {
-		if let array = self.tableView.indexPathsForSelectedRows() as! [NSIndexPath]! {
+		if let array = self.tableView.indexPathsForSelectedRows as [NSIndexPath]! {
 			for var i = array.count - 1; i >= 0 ; --i {
 				history.markRowForDeletion(array[i].row)
 			}
