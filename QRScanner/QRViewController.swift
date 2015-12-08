@@ -9,6 +9,15 @@
 import UIKit
 import AVFoundation
 
+extension CIImage {
+	
+	class func createQRForString(qrString: NSString) ->CIImage {
+		let stringData = qrString.dataUsingEncoding(NSISOLatin1StringEncoding)
+		let qrFilter = CIFilter(name:"CIQRCodeGenerator")
+		qrFilter!.setValue(stringData, forKey: "inputMessage")
+		return qrFilter!.outputImage!
+	}
+}
 
 
 class UIViewResize: UIView {
@@ -207,7 +216,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 						newPoint = self.videoPreviewLayer.superlayer!.convertPoint(newPoint, fromLayer: self.videoPreviewLayer)
 						arrayOfPoints.append(newPoint)
 					}
+					
 					index.qrString = object.stringValue
+
 					let newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
 					index.updateLocation(newRect, corners: arrayOfPoints)
 //					self.updateSelectedLayer()
@@ -241,19 +252,16 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			let touchPoint = touch.locationInView(self.view)
 			for layer in self.preview.layer.sublayers as [CALayer]! {
 				let convertedPoint = self.view.layer.convertPoint(touchPoint, toLayer: layer)
-
 				if !(layer is QRLayer) {continue}
 				if CGPathContainsPoint((layer as! QRLayer).path, nil, convertedPoint, true) {
-					let url = NSURL(string: (layer as! QRLayer).qrString)
-					if (url == nil) {
-						self.displayMessage("No URL", time: 1)
-						continue
-					}
 					self.selectedLayer = (layer as! QRLayer)
 
 					let newHistory = HistoryEntry()
 					newHistory.string = (layer as! QRLayer).qrString
 					newHistory.date = NSDate()
+					let position = layer.position
+					NSLog("Overlay position: %@", NSStringFromCGPoint(position))
+
 					self.displayOverlay(newHistory)
 					//TODO add the history entry
 					return //no need to continue parsing throught the available QR
@@ -261,14 +269,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			}
 		}
 	}
-
-//	func updateSelectedLayer() {
-//		if let selectLayer = self.selectedLayer {
-//			for layer in self.layers {
-//
-//			}
-//		}
-//	}
 
 	func displayOverlayFromHistory(notification: NSNotification) {
 		self.navigationController!.popViewControllerAnimated(true)
@@ -285,13 +285,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		}
 		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 		self.qrOverlay.historyToDisplay = newHistory
+		self.qrOverlay.view.frame = CGRectMake(0, 0, 0, 0)
+		self.qrOverlay.view.center = self.view.center
 		self.addChildViewController(self.qrOverlay)
 		self.qrOverlay.view.frame = self.preview.frame
-		self.qrOverlay.view.frame.origin.y = self.qrOverlay.view.frame.size.height
 		self.view.addSubview(self.qrOverlay.view)
-		UIView.animateWithDuration(0.3, animations: { () -> Void in
-			self.qrOverlay.view.frame = self.preview.frame
-		})
 	}
 
 	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {

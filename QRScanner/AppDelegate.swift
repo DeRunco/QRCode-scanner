@@ -40,7 +40,16 @@ var counter = 0;
 
 class HistoryStorage {
 	var cachedHistory = [HistoryEntry]()
-
+	
+	func isAlreadySaved(his: HistoryEntry) -> Bool {
+		self.loadInfo()
+		let bob = self.cachedHistory
+		for b in bob {
+			if b.string == his.string { return true }
+		}
+		return false
+	}
+	
 	func loadInfo() {
 		cachedHistory.removeAll(keepCapacity: true)
 		let archivedHistory: NSData! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSData!

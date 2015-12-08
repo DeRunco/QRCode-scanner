@@ -9,8 +9,11 @@
 import UIKit
 
 class QRHistoryOverlayViewController: UIViewController {
-	@IBOutlet var qrstring: UILabel!
+	@IBOutlet var qrstring: UITextView!
 	@IBOutlet var qrdate: UILabel!
+	@IBOutlet var image: UIImageView!
+	@IBOutlet var favorite: UIButton!
+	
 	var historyToDisplay: HistoryEntry!
 
 	override func viewDidLoad() {
@@ -18,6 +21,7 @@ class QRHistoryOverlayViewController: UIViewController {
 		qrstring.userInteractionEnabled = false
 		self.configureDisplay()
 		// Do any additional setup after loading the view.
+
 	}
 
 	override func didReceiveMemoryWarning() {
@@ -29,6 +33,13 @@ class QRHistoryOverlayViewController: UIViewController {
 		if self.historyToDisplay == nil { return }
 		dispatch_async(dispatch_get_main_queue(), { () -> Void in
 			self.qrstring.text = self.historyToDisplay.string
+			var image = CIImage.createQRForString(self.historyToDisplay.string)
+			let width = image.extent.width
+			let height = image.extent.height
+			let transform = CGAffineTransformMakeScale(100/width, 100/height)
+			image = image.imageByApplyingTransform(transform)
+			self.image.image = UIImage(CIImage: image)
+			self.favorite
 		})
 	}
 
@@ -40,7 +51,11 @@ class QRHistoryOverlayViewController: UIViewController {
 		(self.parentViewController! as! QRViewController).removeOverlay(self, openURL:qrstring.text)
 	}
 
-	@IBAction func updateHistory() {
+	@IBAction func updateHistory(sender : UIButton) {
+		if (history.isAlreadySaved(self.historyToDisplay)) {
+			return
+		}
+		sender.tintColor = UIColor.blueColor()
 		history.saveInfo([self.historyToDisplay!]);
 		let currentcolor = self.view.backgroundColor
 		self.view.backgroundColor = UIColor.whiteColor()
