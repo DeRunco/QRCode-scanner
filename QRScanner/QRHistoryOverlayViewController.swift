@@ -9,8 +9,7 @@
 import UIKit
 
 class QRHistoryOverlayViewController: UIViewController {
-	@IBOutlet var qrstring: UITextView!
-	@IBOutlet var qrdate: UILabel!
+	@IBOutlet var qrstring: UILabel!
 	@IBOutlet var image: UIImageView!
 	@IBOutlet var favorite: UIButton!
 	
@@ -39,7 +38,6 @@ class QRHistoryOverlayViewController: UIViewController {
 			let transform = CGAffineTransformMakeScale(100/width, 100/height)
 			image = image.imageByApplyingTransform(transform)
 			self.image.image = UIImage(CIImage: image)
-			self.favorite
 		})
 	}
 

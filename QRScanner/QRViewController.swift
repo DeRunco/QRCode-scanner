@@ -279,20 +279,38 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		}
 	}
 
+	
 	func displayOverlay(newHistory: HistoryEntry) {
 		if let _ = self.qrOverlay {
 			return
 		}
-		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
+
+		if #available(iOS 8.0, *) {
+  			self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewControllerWithVibrancy") as! QRHistoryOverlayViewController
+		} else {
+  			self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
+		}
+
 		self.qrOverlay.historyToDisplay = newHistory
 		self.qrOverlay.view.frame = CGRectMake(0, 0, 0, 0)
 		self.qrOverlay.view.center = self.view.center
+		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
 		self.addChildViewController(self.qrOverlay)
-		self.qrOverlay.view.frame = self.preview.frame
 		self.view.addSubview(self.qrOverlay.view)
+		
+		let a = NSLayoutConstraint.constraintsWithVisualFormat("V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
+			views: ["navView":self.navigationController!.view,
+			"overlay":self.qrOverlay.view!])
+		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
+		self.view.addConstraints(a)
+		self.view.addConstraints(b)
+		
+		
 	}
 
 	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {
+		//check if it is posible to open the URL?
+		
 		if self.qrOverlay == vc {
 			self.qrOverlay = nil
 			self.selectedLayer = nil
