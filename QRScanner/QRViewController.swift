@@ -284,12 +284,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		if let _ = self.qrOverlay {
 			return
 		}
-
-		if #available(iOS 8.0, *) {
-  			self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewControllerWithVibrancy") as! QRHistoryOverlayViewController
-		} else {
-  			self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
-		}
+  		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 
 		self.qrOverlay.historyToDisplay = newHistory
 		self.qrOverlay.view.frame = CGRectMake(0, 0, 0, 0)
@@ -299,12 +294,12 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		self.view.addSubview(self.qrOverlay.view)
 		
 		let a = NSLayoutConstraint.constraintsWithVisualFormat("V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
-			views: ["navView":self.navigationController!.view,
+			views: ["navView":self.navigationController!.navigationBar,
 			"overlay":self.qrOverlay.view!])
 		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
-		self.view.addConstraints(a)
-		self.view.addConstraints(b)
-		
+		self.parentViewController!.view.addConstraints(a)
+		self.parentViewController!.view.addConstraints(b)
+
 		
 	}
 
