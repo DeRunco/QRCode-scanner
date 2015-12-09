@@ -16,7 +16,6 @@ let kEntrySelectedFromHistoryNotification = "EntrySelectedFromHistory"
 let kEntryUserInfo = "entry"
 
 
-
 class HistoryControllerCell: UITableViewCell {
 	@IBOutlet weak var title: UILabel!
 	@IBOutlet weak var detail: UILabel!
@@ -32,7 +31,10 @@ class QRHistoryController: UITableViewController {
 		refresh.addTarget(self, action: "refreshHistory:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refresh
 		self.tableView.allowsMultipleSelectionDuringEditing = true
+
 	}
+	
+
 
 	func removeEntry(index: Int) {
 		history.cachedHistory.removeAtIndex(index)

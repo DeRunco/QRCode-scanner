@@ -10,7 +10,7 @@
         <!--Navigation Controller-->
         <scene sceneID="Svb-e0-McB">
             <objects>
-                <navigationController id="BHP-24-I4U" sceneMemberID="viewController">
+                <navigationController id="BHP-24-I4U" customClass="QRNavigationController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wLD-2D-26B">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -54,6 +54,7 @@
                     <navigationItem key="navigationItem" title="QR Scanner" id="GBr-Iq-9S4">
                         <barButtonItem key="rightBarButtonItem" title="History" id="oND-4H-M9v">
                             <connections>
+                                <action selector="backFromHistory:" destination="BYZ-38-t0r" id="c6V-Gy-csN"/>
                                 <segue destination="3kA-xC-wnc" kind="show" id="NHK-ko-v2x"/>
                             </connections>
                         </barButtonItem>
@@ -65,7 +66,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-206" y="297"/>
+            <point key="canvasLocation" x="-194" y="305"/>
         </scene>
         <!--History Overlay View Controller-->
         <scene sceneID="Nqc-95-B2q">
@@ -100,11 +101,10 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eXq-21-Eme">
-                                <rect key="frame" x="20" y="152" width="560" height="123"/>
+                                <rect key="frame" x="20" y="152" width="560" height="60"/>
                                 <animations/>
-                                <color key="backgroundColor" white="0.66666666669999997" alpha="0.64703663789999999" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="123" placeholder="YES" id="cM6-Nm-dNb"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="cM6-Nm-dNb"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
@@ -112,7 +112,6 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z9d-qs-qY2">
                                 <rect key="frame" x="358" y="106" width="51" height="30"/>
                                 <animations/>
-                                <color key="backgroundColor" white="0.66666666669999997" alpha="0.64703663789999999" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Launch"/>
                                 <connections>
                                     <action selector="validate" destination="obD-Bc-p06" eventType="touchUpInside" id="4Ph-1n-Q3K"/>
@@ -208,7 +207,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a07-CE-8N4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="465" y="297"/>
+            <point key="canvasLocation" x="494" y="305"/>
         </scene>
     </scenes>
     <resources>

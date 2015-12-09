@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 
+
 extension CIImage {
 	
 	class func createQRForString(qrString: NSString) ->CIImage {
@@ -168,12 +169,21 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		super.willAnimateRotationToInterfaceOrientation(toInterfaceOrientation, duration: duration)
 		self.updateViewDisplayAccordingToOrientation(toInterfaceOrientation)
 	}
-
+	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
 		if (videoPreviewLayer == nil) {return}
 		videoPreviewLayer.frame = preview.layer.bounds
-		
+//		if let _ = self.qrOverlay {
+//			self.displayOverlay(self.qrOverlay.historyToDisplay!)
+//		}
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+//		if let _ = self.qrOverlay {
+//			self.qrOverlay.view.hidden = true;
+//		}
 	}
 
 	override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
@@ -243,6 +253,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	func hideMessage(timer: NSTimer) {
 		(timer.userInfo!["view"]! as! UILabel).alpha = 0
 	}
+	
+	@IBAction func backFromHistory(button: UIBarButtonItem) {
+		
+	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		if self.qrOverlay != nil{
@@ -259,8 +273,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 					let newHistory = HistoryEntry()
 					newHistory.string = (layer as! QRLayer).qrString
 					newHistory.date = NSDate()
-					let position = layer.position
-					NSLog("Overlay position: %@", NSStringFromCGPoint(position))
 
 					self.displayOverlay(newHistory)
 					//TODO add the history entry
@@ -269,25 +281,31 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			}
 		}
 	}
+	
+
 
 	func displayOverlayFromHistory(notification: NSNotification) {
-		self.navigationController!.popViewControllerAnimated(true)
-		if let userInfo = notification.userInfo as? [String:HistoryEntry] {
-			if let entry = userInfo[kEntryUserInfo] {
-				self.displayOverlay(entry)
+		self.navigationController!.popToRootViewControllerAnimated(true)
+		dispatch_async(dispatch_get_main_queue()) { () -> Void in
+			if let userInfo = notification.userInfo as? [String:HistoryEntry] {
+				if let entry = userInfo[kEntryUserInfo] {
+					self.displayOverlay(entry)
+				}
 			}
 		}
 	}
-
 	
 	func displayOverlay(newHistory: HistoryEntry) {
 		if let _ = self.qrOverlay {
-			return
+			self.qrOverlay.view.removeFromSuperview()
+			self.qrOverlay.removeFromParentViewController()
+			self.qrOverlay = nil
 		}
-  		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 
+		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 		self.qrOverlay.historyToDisplay = newHistory
-		self.qrOverlay.view.frame = CGRectMake(0, 0, 0, 0)
+
+		self.qrOverlay.view.frame = CGRectMake(0, 0, 15, 15)
 		self.qrOverlay.view.center = self.view.center
 		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
 		self.addChildViewController(self.qrOverlay)
@@ -299,9 +317,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
 		self.parentViewController!.view.addConstraints(a)
 		self.parentViewController!.view.addConstraints(b)
-
-		
+		self.qrOverlay.view.hidden = false;
 	}
+	
+	
 
 	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {
 		//check if it is posible to open the URL?
