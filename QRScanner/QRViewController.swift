@@ -259,8 +259,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		if self.qrOverlay != nil{
-			self.removeOverlay(self.qrOverlay, openURL: nil);
+		if let _ = self.qrOverlay {
+			super.touchesEnded(touches, withEvent: event)
+			return
 		}
 		for touch in touches {
 			let touchPoint = touch.locationInView(self.view)
@@ -280,6 +281,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				}
 			}
 		}
+
 	}
 	
 
@@ -317,12 +319,17 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
 		self.parentViewController!.view.addConstraints(a)
 		self.parentViewController!.view.addConstraints(b)
-		self.qrOverlay.view.hidden = false;
 	}
 	
 	
-
-	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {
+	func openQR(openURL: String!) {
+		if openURL != nil {
+			let url = NSURL(string: openURL!)
+			UIApplication.sharedApplication().openURL(url!)
+		}
+	}
+	
+	func removeOverlay(vc: QRHistoryOverlayViewController) {
 		//check if it is posible to open the URL?
 		
 		if self.qrOverlay == vc {
@@ -335,10 +342,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		}) { (_) -> Void in
 			vc.removeFromParentViewController()
 			vc.view.removeFromSuperview()
-			if openURL != nil {
-				let url = NSURL(string: openURL!)
-				UIApplication.sharedApplication().openURL(url!)
-			}
 		}
 	}
 }

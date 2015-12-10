@@ -82,6 +82,7 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="adu-Qo-HXT">
                                 <rect key="frame" x="250" y="36" width="100" height="100"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="Lke-zI-HsY"/>
                                     <constraint firstAttribute="width" secondItem="adu-Qo-HXT" secondAttribute="height" multiplier="1:1" id="zVT-Ov-j2B"/>
@@ -106,31 +107,21 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z9d-qs-qY2">
-                                <rect key="frame" x="358" y="106" width="51" height="30"/>
-                                <state key="normal" title="Launch"/>
-                                <connections>
-                                    <action selector="validate" destination="obD-Bc-p06" eventType="touchUpInside" id="4Ph-1n-Q3K"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.20000000000000001" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="adu-Qo-HXT" firstAttribute="top" secondItem="aQD-C3-ePg" secondAttribute="bottom" constant="16" id="ABa-Oy-Ttm"/>
                             <constraint firstItem="eXq-21-Eme" firstAttribute="trailing" secondItem="VPF-4c-kEX" secondAttribute="trailingMargin" id="Av7-KA-w4E"/>
                             <constraint firstItem="adu-Qo-HXT" firstAttribute="centerX" secondItem="VPF-4c-kEX" secondAttribute="centerX" id="Bvm-Zx-rPX"/>
-                            <constraint firstItem="z9d-qs-qY2" firstAttribute="bottom" secondItem="adu-Qo-HXT" secondAttribute="bottom" id="IVO-Xp-3kh"/>
                             <constraint firstItem="AZd-a5-QRP" firstAttribute="top" secondItem="adu-Qo-HXT" secondAttribute="top" id="VEE-Sh-TnY"/>
                             <constraint firstItem="AZd-a5-QRP" firstAttribute="leading" secondItem="adu-Qo-HXT" secondAttribute="trailing" constant="8" id="VY0-nO-FP7"/>
                             <constraint firstItem="eXq-21-Eme" firstAttribute="top" secondItem="adu-Qo-HXT" secondAttribute="bottom" constant="16" id="au4-Vq-RGc"/>
-                            <constraint firstItem="z9d-qs-qY2" firstAttribute="leading" secondItem="adu-Qo-HXT" secondAttribute="trailing" constant="8" id="eiW-2J-hAE"/>
                             <constraint firstItem="eXq-21-Eme" firstAttribute="leading" secondItem="VPF-4c-kEX" secondAttribute="leadingMargin" id="lb6-n9-eeG"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="favorite" destination="AZd-a5-QRP" id="DUG-BJ-fxj"/>
                         <outlet property="image" destination="adu-Qo-HXT" id="JAE-RY-jHg"/>
-                        <outlet property="launch" destination="z9d-qs-qY2" id="o8C-tz-ln2"/>
                         <outlet property="qrstring" destination="eXq-21-Eme" id="6N9-bc-ruF"/>
                     </connections>
                 </viewController>
