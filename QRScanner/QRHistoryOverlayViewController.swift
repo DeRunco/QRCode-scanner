@@ -71,6 +71,21 @@ class QRHistoryOverlayViewController: UIViewController {
 
 		})
 	}
+
+	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		var touchIsIn = false
+		for touch in touches {
+			if (CGRectContainsPoint(self.image.frame, touch.locationInView(self.view))) {
+				touchIsIn = true
+				self.validate()
+			}
+		}
+		if !touchIsIn {
+			self.cancel()
+			print("Cancel")
+		}
+	}
+	
 	
 	func configureDisplay() {
 		if self.historyToDisplay == nil { return }
@@ -87,12 +102,12 @@ class QRHistoryOverlayViewController: UIViewController {
 		})
 	}
 	
-	@IBAction func cancel() {
-		(self.parentViewController! as! QRViewController).removeOverlay(self, openURL:nil)
+	func cancel() {
+		(self.parentViewController! as! QRViewController).removeOverlay(self)
 	}
 	
 	@IBAction func validate() {
-		(self.parentViewController! as! QRViewController).removeOverlay(self, openURL:qrstring.text)
+		(self.parentViewController! as! QRViewController).openQR(qrstring.text)
 	}
 	
 	@IBAction func updateHistory(sender : UIButton) {

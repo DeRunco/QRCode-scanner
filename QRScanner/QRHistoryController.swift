@@ -83,6 +83,7 @@ class QRHistoryController: UITableViewController {
 		//display the overlay
 		let entry = history.cachedHistory[indexPath.row]
 		NSNotificationCenter.defaultCenter().postNotificationName(kEntrySelectedFromHistoryNotification, object: nil, userInfo:[kEntryUserInfo:entry])
+		self.performSegueWithIdentifier("removePopover", sender: self)
 	}
 
 	func refreshHistory(sender: AnyObject!) {
