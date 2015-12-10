@@ -16,7 +16,6 @@ let kEntrySelectedFromHistoryNotification = "EntrySelectedFromHistory"
 let kEntryUserInfo = "entry"
 
 
-
 class HistoryControllerCell: UITableViewCell {
 	@IBOutlet weak var title: UILabel!
 	@IBOutlet weak var detail: UILabel!
@@ -32,7 +31,10 @@ class QRHistoryController: UITableViewController {
 		refresh.addTarget(self, action: "refreshHistory:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refresh
 		self.tableView.allowsMultipleSelectionDuringEditing = true
+
 	}
+	
+
 
 	func removeEntry(index: Int) {
 		history.cachedHistory.removeAtIndex(index)
@@ -96,7 +98,12 @@ class QRHistoryController: UITableViewController {
 		    // Fallback on earlier versions
 		}
 	}
-
+	
+	@IBAction func cancel(sender: UIBarButtonItem) {
+		self.performSegueWithIdentifier("removePopover", sender: self)
+	}
+	
+	
 	func removeSelectedEntries() {
 		if let array = self.tableView.indexPathsForSelectedRows as [NSIndexPath]! {
 			for var i = array.count - 1; i >= 0 ; --i {

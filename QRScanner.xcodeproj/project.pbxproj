@@ -12,6 +12,7 @@
 		562DCB421B45345100A95D2C /* QRLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3C1B45345100A95D2C /* QRLayer.swift */; };
 		562DCB431B45345100A95D2C /* QRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3D1B45345100A95D2C /* QRViewController.swift */; };
 		562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB561B457BC700A95D2C /* LaunchScreen.xib */; };
+		56670B151C185FC3002D5133 /* QRNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56670B141C185FC3002D5133 /* QRNavigationController.swift */; };
 		566BF5711B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */; };
 		56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A1D58C1B46B52C00EA9336 /* Images.xcassets */; };
 		56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB551B457BC700A95D2C /* Main.storyboard */; };
@@ -26,6 +27,7 @@
 		562DCB3D1B45345100A95D2C /* QRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRViewController.swift; sourceTree = "<group>"; };
 		562DCB551B457BC700A95D2C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		562DCB561B457BC700A95D2C /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		56670B141C185FC3002D5133 /* QRNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRNavigationController.swift; sourceTree = "<group>"; };
 		566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRHistoryOverlayViewController.swift; sourceTree = "<group>"; };
 		56A1D58C1B46B52C00EA9336 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -63,6 +65,7 @@
 				562DCB3A1B45345100A95D2C /* QRHistoryController.swift */,
 				562DCB3C1B45345100A95D2C /* QRLayer.swift */,
 				562DCB3D1B45345100A95D2C /* QRViewController.swift */,
+				56670B141C185FC3002D5133 /* QRNavigationController.swift */,
 				566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */,
 				562DCB151B45341C00A95D2C /* AppDelegate.swift */,
 				562DCB551B457BC700A95D2C /* Main.storyboard */,
@@ -158,6 +161,7 @@
 				562DCB421B45345100A95D2C /* QRLayer.swift in Sources */,
 				562DCB161B45341C00A95D2C /* AppDelegate.swift in Sources */,
 				562DCB431B45345100A95D2C /* QRViewController.swift in Sources */,
+				56670B151C185FC3002D5133 /* QRNavigationController.swift in Sources */,
 				566BF5711B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

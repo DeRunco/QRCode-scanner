@@ -10,6 +10,16 @@ import UIKit
 import AVFoundation
 
 
+extension CIImage {
+	
+	class func createQRForString(qrString: NSString) ->CIImage {
+		let stringData = qrString.dataUsingEncoding(NSISOLatin1StringEncoding)
+		let qrFilter = CIFilter(name:"CIQRCodeGenerator")
+		qrFilter!.setValue(stringData, forKey: "inputMessage")
+		return qrFilter!.outputImage!
+	}
+}
+
 
 class UIViewResize: UIView {
 	
@@ -203,7 +213,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 						newPoint = self.videoPreviewLayer.superlayer!.convertPoint(newPoint, fromLayer: self.videoPreviewLayer)
 						arrayOfPoints.append(newPoint)
 					}
+					
 					index.qrString = object.stringValue
+
 					let newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
 					index.updateLocation(newRect, corners: arrayOfPoints)
 //					self.updateSelectedLayer()
@@ -228,6 +240,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	func hideMessage(timer: NSTimer) {
 		(timer.userInfo!["view"]! as! UILabel).alpha = 0
 	}
+	
+	@IBAction func backFromHistory(button: UIBarButtonItem) {
+		
+	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		if self.qrOverlay != nil{
@@ -237,19 +253,14 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			let touchPoint = touch.locationInView(self.view)
 			for layer in self.preview.layer.sublayers as [CALayer]! {
 				let convertedPoint = self.view.layer.convertPoint(touchPoint, toLayer: layer)
-
 				if !(layer is QRLayer) {continue}
 				if CGPathContainsPoint((layer as! QRLayer).path, nil, convertedPoint, true) {
-					let url = NSURL(string: (layer as! QRLayer).qrString)
-					if (url == nil) {
-						self.displayMessage("No URL", time: 1)
-						continue
-					}
 					self.selectedLayer = (layer as! QRLayer)
 
 					let newHistory = HistoryEntry()
 					newHistory.string = (layer as! QRLayer).qrString
 					newHistory.date = NSDate()
+
 					self.displayOverlay(newHistory)
 					//TODO add the history entry
 					return //no need to continue parsing throught the available QR
@@ -257,40 +268,50 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			}
 		}
 	}
+	
 
-//	func updateSelectedLayer() {
-//		if let selectLayer = self.selectedLayer {
-//			for layer in self.layers {
-//
-//			}
-//		}
-//	}
 
 	func displayOverlayFromHistory(notification: NSNotification) {
-		self.navigationController!.popViewControllerAnimated(true)
-		if let userInfo = notification.userInfo as? [String:HistoryEntry] {
-			if let entry = userInfo[kEntryUserInfo] {
-				self.displayOverlay(entry)
+		self.navigationController!.popToRootViewControllerAnimated(true)
+		dispatch_async(dispatch_get_main_queue()) { () -> Void in
+			if let userInfo = notification.userInfo as? [String:HistoryEntry] {
+				if let entry = userInfo[kEntryUserInfo] {
+					self.displayOverlay(entry)
+				}
 			}
 		}
 	}
-
+	
 	func displayOverlay(newHistory: HistoryEntry) {
 		if let _ = self.qrOverlay {
-			return
+			self.qrOverlay.view.removeFromSuperview()
+			self.qrOverlay.removeFromParentViewController()
+			self.qrOverlay = nil
 		}
+
 		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 		self.qrOverlay.historyToDisplay = newHistory
+
+		self.qrOverlay.view.frame = CGRectMake(0, 0, 15, 15)
+		self.qrOverlay.view.center = self.view.center
+		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
 		self.addChildViewController(self.qrOverlay)
-		self.qrOverlay.view.frame = self.preview.frame
-		self.qrOverlay.view.frame.origin.y = self.qrOverlay.view.frame.size.height
 		self.view.addSubview(self.qrOverlay.view)
-		UIView.animateWithDuration(0.3, animations: { () -> Void in
-			self.qrOverlay.view.frame = self.preview.frame
-		})
+		
+		let a = NSLayoutConstraint.constraintsWithVisualFormat("V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
+			views: ["navView":self.navigationController!.navigationBar,
+			"overlay":self.qrOverlay.view!])
+		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
+		self.parentViewController!.view.addConstraints(a)
+		self.parentViewController!.view.addConstraints(b)
+		self.qrOverlay.view.hidden = false;
 	}
+	
+	
 
 	func removeOverlay(vc: QRHistoryOverlayViewController, openURL: String!) {
+		//check if it is posible to open the URL?
+		
 		if self.qrOverlay == vc {
 			self.qrOverlay = nil
 			self.selectedLayer = nil
