@@ -10,7 +10,12 @@ import UIKit
 
 let kHistoryStorage = "History Key"
 
-class HistoryEntry: NSObject, NSCoding {
+func ==(lhs: HistoryEntry, rhs: HistoryEntry) -> Bool {
+	return lhs.string == rhs.string
+}
+
+
+class HistoryEntry: NSObject, NSCoding{
 	var date: NSDate!
 	var string: String!
 	var deletionMark: Bool = false
@@ -32,8 +37,7 @@ class HistoryEntry: NSObject, NSCoding {
 		aCoder.encodeBool(deletionMark, forKey: "deletion")
 		aCoder.encodeBool(favorited, forKey: "favorited")
 	}
-
-
+	
 	func toString() -> String {
 		return "\(date!): \(string!)"
 	}
@@ -41,7 +45,7 @@ class HistoryEntry: NSObject, NSCoding {
 
 var counter = 0;
 
-class HistoryStorage {
+class HistoryStorage{
 	var cachedHistory = [HistoryEntry]()
 
 	func isThereFavorites() -> Bool {
@@ -74,7 +78,16 @@ class HistoryStorage {
 			}
 		}
 	}
-
+	
+	func removeHistory(historyDescription: HistoryEntry){
+		for bob in self.cachedHistory {
+			if bob.string == historyDescription.string {
+				bob.deletionMark = true
+			}
+		}
+		self.saveInfo(nil)
+	}
+	
 	func markRowForDeletion(row: Int){
 		self.cachedHistory[row].deletionMark = true
 	}

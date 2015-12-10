@@ -8,7 +8,7 @@
 
 import UIKit
 
-let selectedTintColor = UIColor.blueColor()
+var selectedTintColor = UIColor.blueColor()
 let unselectedTintColor = UIColor.blackColor()
 
 class QRHistoryOverlayViewController: UIViewController {
@@ -31,6 +31,7 @@ class QRHistoryOverlayViewController: UIViewController {
 	}
 	
 	override func viewDidLoad() {
+		selectedTintColor = self.view.tintColor
 		super.viewDidLoad()
 		qrstring.userInteractionEnabled = false
 		self.configureDisplay()
@@ -39,12 +40,52 @@ class QRHistoryOverlayViewController: UIViewController {
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		self.favorite.tintColor = history.isAlreadySaved(self.historyToDisplay) ? selectedTintColor : unselectedTintColor
+		self.updateFavoriteStatus()
 	}
 	
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
+	}
+	
+
+
+	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		var touchIsIn = false
+		for touch in touches {
+			if (CGRectContainsPoint(self.image.frame, touch.locationInView(self.view))) {
+				touchIsIn = true
+				self.validate()
+			}
+		}
+		if !touchIsIn {
+			self.cancel()
+		}
+	}
+
+	func configureDisplay() {
+		if self.historyToDisplay == nil { return }
+		self.updateBackground()
+		self.updateContent()
+		self.updateFavoriteStatus()
+	}
+	
+	func updateContent() {
+		dispatch_async(dispatch_get_main_queue(), { () -> Void in
+			self.qrstring.text = self.historyToDisplay.string
+			var image = CIImage.createQRForString(self.historyToDisplay.string)
+			let width = image.extent.width
+			let height = image.extent.height
+			let transform = CGAffineTransformMakeScale(100/width, 100/height)
+			image = image.imageByApplyingTransform(transform)
+			self.image.image = UIImage(CIImage: image)
+		})
+	}
+	
+	func updateFavoriteStatus () {
+		dispatch_async(dispatch_get_main_queue(), { () -> Void in
+			self.favorite.tintColor = history.isAlreadySaved(self.historyToDisplay) ? selectedTintColor : unselectedTintColor
+		})
 	}
 	
 	func updateBackground() {
@@ -68,37 +109,7 @@ class QRHistoryOverlayViewController: UIViewController {
 			} else {
 				self.view.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
 			}
-
-		})
-	}
-
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		var touchIsIn = false
-		for touch in touches {
-			if (CGRectContainsPoint(self.image.frame, touch.locationInView(self.view))) {
-				touchIsIn = true
-				self.validate()
-			}
-		}
-		if !touchIsIn {
-			self.cancel()
-			print("Cancel")
-		}
-	}
-	
-	
-	func configureDisplay() {
-		if self.historyToDisplay == nil { return }
-		self.updateBackground()
-		dispatch_async(dispatch_get_main_queue(), { () -> Void in
 			
-			self.qrstring.text = self.historyToDisplay.string
-			var image = CIImage.createQRForString(self.historyToDisplay.string)
-			let width = image.extent.width
-			let height = image.extent.height
-			let transform = CGAffineTransformMakeScale(100/width, 100/height)
-			image = image.imageByApplyingTransform(transform)
-			self.image.image = UIImage(CIImage: image)
 		})
 	}
 	
@@ -111,15 +122,17 @@ class QRHistoryOverlayViewController: UIViewController {
 	}
 	
 	@IBAction func updateHistory(sender : UIButton) {
-		if (history.isAlreadySaved(self.historyToDisplay)) {
-			return
-		}
-		history.saveInfo([self.historyToDisplay!])
 		let currentcolor = self.view.backgroundColor
 		self.view.backgroundColor = UIColor.whiteColor()
 		UIView.animateWithDuration(0.3, animations: { () -> Void in
 			self.view.backgroundColor = currentcolor
 		})
+		
+		if (history.isAlreadySaved(self.historyToDisplay)) {
+			history.removeHistory(self.historyToDisplay)
+		} else {
+			history.saveInfo([self.historyToDisplay!])
+		}
+		self.updateFavoriteStatus()
 	}
-	
 }
