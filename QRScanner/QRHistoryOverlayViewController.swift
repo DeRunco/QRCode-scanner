@@ -17,7 +17,18 @@ class QRHistoryOverlayViewController: UIViewController {
 	@IBOutlet var favorite: UIButton!
 	@IBOutlet var launch: UIButton!
 	
-	var historyToDisplay: HistoryEntry!
+	var historyToDisplay: HistoryEntry! {
+		didSet {
+			if (self.qrstring == nil) { return }
+			self.qrstring.text = self.historyToDisplay.string
+			var image = CIImage.createQRForString(self.historyToDisplay.string)
+			let width = image.extent.width
+			let height = image.extent.height
+			let transform = CGAffineTransformMakeScale(100/width, 100/height)
+			image = image.imageByApplyingTransform(transform)
+			self.image.image = UIImage(CIImage: image)
+		}
+	}
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -60,8 +71,6 @@ class QRHistoryOverlayViewController: UIViewController {
 
 		})
 	}
-
-	
 	
 	func configureDisplay() {
 		if self.historyToDisplay == nil { return }

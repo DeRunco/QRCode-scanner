@@ -284,23 +284,22 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	
 	func displayOverlay(newHistory: HistoryEntry) {
 		if let _ = self.qrOverlay {
-			self.qrOverlay.view.removeFromSuperview()
-			self.qrOverlay.removeFromParentViewController()
-			self.qrOverlay = nil
+//			self.qrOverlay.view.removeFromSuperview()
+//			self.qrOverlay.removeFromParentViewController()
+//			self.qrOverlay = nil
+		} else {
+			self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 		}
-
-		self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
 		self.qrOverlay.historyToDisplay = newHistory
-
+		
 		self.qrOverlay.view.frame = CGRectMake(0, 0, 15, 15)
 		self.qrOverlay.view.center = self.view.center
 		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
 		self.addChildViewController(self.qrOverlay)
 		self.view.addSubview(self.qrOverlay.view)
-		
+	
 		let a = NSLayoutConstraint.constraintsWithVisualFormat("V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
-			views: ["navView":self.navigationController!.navigationBar,
-			"overlay":self.qrOverlay.view!])
+			views: ["navView":self.navigationController!.navigationBar, "overlay":self.qrOverlay.view!])
 		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
 		self.parentViewController!.view.addConstraints(a)
 		self.parentViewController!.view.addConstraints(b)
