@@ -97,7 +97,12 @@ class QRHistoryController: UITableViewController {
 		    // Fallback on earlier versions
 		}
 	}
-
+	
+	@IBAction func cancel(sender: UIBarButtonItem) {
+		self.performSegueWithIdentifier("removePopover", sender: self)
+	}
+	
+	
 	func removeSelectedEntries() {
 		if let array = self.tableView.indexPathsForSelectedRows as [NSIndexPath]! {
 			for var i = array.count - 1; i >= 0 ; --i {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BHP-24-I4U">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BHP-24-I4U">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -14,7 +14,6 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wLD-2D-26B">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                     </navigationBar>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="uiy-5C-Kwv"/>
@@ -38,11 +37,9 @@
                         <subviews>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WD3-wT-biO" customClass="UIViewResize" customModule="QRScanner" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="24" width="600" height="576"/>
-                                <animations/>
                                 <color key="backgroundColor" red="0.96470588239999999" green="0.53725490200000003" blue="0.12941176469999999" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
-                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="WD3-wT-biO" secondAttribute="bottom" id="51L-EX-abT"/>
@@ -55,7 +52,9 @@
                         <barButtonItem key="rightBarButtonItem" title="History" id="oND-4H-M9v">
                             <connections>
                                 <action selector="backFromHistory:" destination="BYZ-38-t0r" id="c6V-Gy-csN"/>
-                                <segue destination="3kA-xC-wnc" kind="show" id="NHK-ko-v2x"/>
+                                <segue destination="8tl-aW-7tC" kind="popoverPresentation" popoverAnchorBarButtonItem="oND-4H-M9v" id="CzM-dj-C3t">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -65,8 +64,9 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <exit id="O3Y-bK-LGt" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-194" y="305"/>
+            <point key="canvasLocation" x="-166" y="305"/>
         </scene>
         <!--History Overlay View Controller-->
         <scene sceneID="Nqc-95-B2q">
@@ -82,7 +82,6 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="adu-Qo-HXT">
                                 <rect key="frame" x="250" y="36" width="100" height="100"/>
-                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="Lke-zI-HsY"/>
                                     <constraint firstAttribute="width" secondItem="adu-Qo-HXT" secondAttribute="height" multiplier="1:1" id="zVT-Ov-j2B"/>
@@ -90,7 +89,6 @@
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AZd-a5-QRP">
                                 <rect key="frame" x="358" y="36" width="32" height="32"/>
-                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="32" id="9FI-7k-zwi"/>
                                     <constraint firstAttribute="width" secondItem="AZd-a5-QRP" secondAttribute="height" multiplier="1:1" id="gMF-uX-8ix"/>
@@ -102,7 +100,6 @@
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eXq-21-Eme">
                                 <rect key="frame" x="20" y="152" width="560" height="60"/>
-                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="cM6-Nm-dNb"/>
                                 </constraints>
@@ -111,14 +108,12 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z9d-qs-qY2">
                                 <rect key="frame" x="358" y="106" width="51" height="30"/>
-                                <animations/>
                                 <state key="normal" title="Launch"/>
                                 <connections>
                                     <action selector="validate" destination="obD-Bc-p06" eventType="touchUpInside" id="4Ph-1n-Q3K"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <animations/>
                         <color key="backgroundColor" white="0.0" alpha="0.20000000000000001" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="adu-Qo-HXT" firstAttribute="top" secondItem="aQD-C3-ePg" secondAttribute="bottom" constant="16" id="ABa-Oy-Ttm"/>
@@ -143,6 +138,22 @@
             </objects>
             <point key="canvasLocation" x="56" y="1051"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="T1d-Am-YWs">
+            <objects>
+                <navigationController id="8tl-aW-7tC" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Z2B-Ev-xBI">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="3kA-xC-wnc" kind="relationship" relationship="rootViewController" id="mCH-Tr-wZD"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iXE-1R-yjF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="560" y="305"/>
+        </scene>
         <!--HistoryController-->
         <scene sceneID="bKL-qZ-Zeg">
             <objects>
@@ -150,7 +161,6 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="rnO-UI-VJA">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="HistoryCellID" rowHeight="56" id="Nwu-Af-9Un" customClass="HistoryControllerCell" customModule="QRScanner" customModuleProvider="target">
@@ -162,20 +172,17 @@
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RFn-Nu-2SD">
                                             <rect key="frame" x="5" y="0.0" width="590" height="39"/>
-                                            <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qYI-n3-9fn">
                                             <rect key="frame" x="564" y="22" width="31" height="33"/>
-                                            <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <animations/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="RFn-Nu-2SD" secondAttribute="trailing" constant="5" id="AWN-Ck-EpC"/>
                                         <constraint firstAttribute="bottom" secondItem="qYI-n3-9fn" secondAttribute="bottom" id="HmR-5H-KgI"/>
@@ -185,7 +192,6 @@
                                         <constraint firstItem="RFn-Nu-2SD" firstAttribute="leading" secondItem="GA9-qN-2Ul" secondAttribute="leading" constant="5" id="scM-bU-5nF"/>
                                     </constraints>
                                 </tableViewCellContentView>
-                                <animations/>
                                 <connections>
                                     <outlet property="detail" destination="qYI-n3-9fn" id="zjT-1L-ieb"/>
                                     <outlet property="title" destination="RFn-Nu-2SD" id="Qw1-pM-oie"/>
@@ -198,16 +204,24 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="History" id="9YA-Sc-5e3">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="CLG-vD-DwL">
+                            <connections>
+                                <action selector="cancel:" destination="3kA-xC-wnc" id="7CC-mZ-Epw"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="trash" id="gal-SM-F4G">
                             <connections>
                                 <action selector="startEditMode:" destination="3kA-xC-wnc" id="IGj-fe-UjY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="O3Y-bK-LGt" kind="unwind" identifier="removePopover" unwindAction="unwindToNavigation:" id="EHf-f0-DbL"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a07-CE-8N4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="494" y="305"/>
+            <point key="canvasLocation" x="1298" y="305"/>
         </scene>
     </scenes>
     <resources>

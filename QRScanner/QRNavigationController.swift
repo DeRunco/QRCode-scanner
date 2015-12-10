@@ -27,5 +27,9 @@ class QRNavigationController: UINavigationController, UINavigationControllerDele
 				(viewController as! QRViewController).displayOverlay((viewController as! QRViewController).qrOverlay.historyToDisplay)
 		}
 	}
+	@IBAction func unwindToNavigation(seg: UIStoryboardSegue)
+	{
+		
+	}
 	
 }
