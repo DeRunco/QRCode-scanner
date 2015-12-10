@@ -14,6 +14,7 @@ class HistoryEntry: NSObject, NSCoding {
 	var date: NSDate!
 	var string: String!
 	var deletionMark: Bool = false
+	var favorited: Bool = false
 	override init() {
 		super.init()
 	}
@@ -22,12 +23,14 @@ class HistoryEntry: NSObject, NSCoding {
 		self.date = aDecoder.decodeObjectForKey("date") as! NSDate
 		self.string = aDecoder.decodeObjectForKey("string") as! String
 		self.deletionMark = aDecoder.decodeBoolForKey("deletion")
+		self.favorited = aDecoder.decodeBoolForKey("favorited")
 	}
 
 	func encodeWithCoder(aCoder: NSCoder) {
 		aCoder.encodeObject(date, forKey: "date")
 		aCoder.encodeObject(string, forKey: "string")
 		aCoder.encodeBool(deletionMark, forKey: "deletion")
+		aCoder.encodeBool(favorited, forKey: "favorited")
 	}
 
 
@@ -41,6 +44,24 @@ var counter = 0;
 class HistoryStorage {
 	var cachedHistory = [HistoryEntry]()
 
+	func isThereFavorites() -> Bool {
+		self.loadInfo()
+		let bob = self.cachedHistory
+		for b in bob {
+			if b.favorited { return true }
+		}
+		return false
+	}
+	
+	func isAlreadySaved(his: HistoryEntry) -> Bool {
+		self.loadInfo()
+		let bob = self.cachedHistory
+		for b in bob {
+			if b.string == his.string { return true }
+		}
+		return false
+	}
+	
 	func loadInfo() {
 		cachedHistory.removeAll(keepCapacity: true)
 		let archivedHistory: NSData! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSData!

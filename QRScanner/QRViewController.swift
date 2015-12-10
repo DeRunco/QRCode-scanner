@@ -131,11 +131,8 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		case .Unknown: shouldRotate = false
 		}
 
-		//prevent rotation if no rotation is needed
 		if shouldRotate {
-//			UIView.setAnimationsEnabled(false)
 			videoPreviewLayer.transform = CATransform3DConcat(CATransform3DIdentity, CATransform3DMakeRotation(angle, 0, 0, 1));
-//			UIView.setAnimationsEnabled(true)
 		}
 	}
 
@@ -149,7 +146,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.Unknown}
 		if toOrientation == UIInterfaceOrientation.LandscapeRight {toOrientation = UIInterfaceOrientation.LandscapeLeft}
 		else if toOrientation == UIInterfaceOrientation.LandscapeLeft { toOrientation = UIInterfaceOrientation.LandscapeRight}
-//		var fromIO = UIApplication.sharedApplication().statusBarOrientation
 		coordinator.animateAlongsideTransition({ (_) -> Void in
 			self.willAnimateRotationToInterfaceOrientation(toOrientation!, duration: 0.3)
 			}, completion:nil	)
@@ -164,7 +160,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		super.viewDidAppear(animated)
 		if (videoPreviewLayer == nil) {return}
 		videoPreviewLayer.frame = preview.layer.bounds
-		
+
 	}
 
 	override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {

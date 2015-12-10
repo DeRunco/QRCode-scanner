@@ -39,7 +39,8 @@ class QRHistoryController: UITableViewController {
 	}
 
 	override	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-		return 1;
+		history.loadInfo()
+		return history.isThereFavorites() ? 2 : 1;
 	}
 
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
