@@ -10,7 +10,7 @@
         <!--Navigation Controller-->
         <scene sceneID="Svb-e0-McB">
             <objects>
-                <navigationController id="BHP-24-I4U" customClass="QRNavigationController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="QRNavigationController" id="BHP-24-I4U" customClass="QRNavigationController" customModule="QRScanner" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wLD-2D-26B">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -20,6 +20,7 @@
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nh6-aa-Tqn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="T5a-EJ-tNN" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-937" y="305"/>
         </scene>
@@ -64,7 +65,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <exit id="O3Y-bK-LGt" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-166" y="305"/>
         </scene>
@@ -198,6 +198,7 @@
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="CLG-vD-DwL">
                             <connections>
                                 <action selector="cancel:" destination="3kA-xC-wnc" id="7CC-mZ-Epw"/>
+                                <segue destination="T5a-EJ-tNN" kind="unwind" identifier="removePopover" unwindAction="unwindToNavigation:" id="zZK-D8-8dN"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="trash" id="gal-SM-F4G">
@@ -206,9 +207,6 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <segue destination="O3Y-bK-LGt" kind="unwind" identifier="removePopover" unwindAction="unwindToNavigation:" id="EHf-f0-DbL"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a07-CE-8N4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -93,11 +93,7 @@ class QRHistoryController: UITableViewController {
 	}
 
 	@IBAction func showScanner (sender: AnyObject) {
-		if #available(iOS 8.0, *) {
-		    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.PrimaryHidden
-		} else {
-		    // Fallback on earlier versions
-		}
+	    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.PrimaryHidden
 	}
 	
 	@IBAction func cancel(sender: UIBarButtonItem) {

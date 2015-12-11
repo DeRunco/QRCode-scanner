@@ -32,4 +32,8 @@ class QRNavigationController: UINavigationController, UINavigationControllerDele
 		
 	}
 	
+	override func viewControllerForUnwindSegueAction(action: Selector, fromViewController: UIViewController, withSender sender: AnyObject?) -> UIViewController? {
+		return self;
+	}
+	
 }

@@ -147,11 +147,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 
 	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-		if #available(iOS 8.0, *) {
-		    super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-		} else {
-		    // Fallback on earlier versions
-		}
+	    super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
 		var toOrientation = UIInterfaceOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)
 		if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.Unknown}
 		if toOrientation == UIInterfaceOrientation.LandscapeRight {toOrientation = UIInterfaceOrientation.LandscapeLeft}
@@ -162,7 +158,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 
 	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-		super.willAnimateRotationToInterfaceOrientation(toInterfaceOrientation, duration: duration)
 		self.updateViewDisplayAccordingToOrientation(toInterfaceOrientation)
 	}
 
@@ -330,5 +325,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			vc.view.removeFromSuperview()
 		}
 	}
+	
 }
 
