@@ -8,8 +8,8 @@
 
 import UIKit
 
-let kHistoryStorage = "History Key"
-
+let kHistoryStorage = "kHistoryStorage"
+let kHistoryEntryUpdate = "kHistoryEntryUpdate"
 func ==(lhs: HistoryEntry, rhs: HistoryEntry) -> Bool {
 	return lhs.string == rhs.string
 }
@@ -19,7 +19,11 @@ class HistoryEntry: NSObject, NSCoding{
 	var date: NSDate!
 	var string: String!
 	var deletionMark: Bool = false
-	var favorited: Bool = false
+	var favorited: Bool = false {
+		didSet {
+			NSNotificationCenter.defaultCenter().postNotificationName(kHistoryEntryUpdate, object: self)
+		}
+	}
 	override init() {
 		super.init()
 	}
