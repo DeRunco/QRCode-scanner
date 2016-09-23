@@ -21,7 +21,7 @@ class HistoryEntry: NSObject, NSCoding{
 	var deletionMark: Bool = false
 	var favorited: Bool = false {
 		didSet {
-			NSNotificationCenter.defaultCenter().postNotificationName(kHistoryEntryUpdate, object: self)
+			NSNotificationCenter.defaultCenter().postNotificationName(kHistoryEntryUpdate, object: nil)
 		}
 	}
 	override init() {
@@ -75,7 +75,7 @@ class HistoryStorage{
 		let archivedHistory: NSData! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSData!
 		if archivedHistory == nil { return }
 		let history = NSKeyedUnarchiver.unarchiveObjectWithData(archivedHistory) as! NSArray!
-		for var count = 0; count < history.count; count++ {
+		for count in 0 ..< history.count {
 			if let entry = history[count] as? HistoryEntry{
 				if (entry.deletionMark) {continue}
 				cachedHistory.append(entry)
@@ -93,6 +93,7 @@ class HistoryStorage{
 	}
 	
 	func markRowForDeletion(row: Int){
+		self.cachedHistory[row].favorited = false
 		self.cachedHistory[row].deletionMark = true
 	}
 

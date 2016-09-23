@@ -71,7 +71,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		} catch let error as NSError {
 			bob.memory = error
 		}
-		captureDevice.focusMode = AVCaptureFocusMode.ContinuousAutoFocus
+		if (captureDevice.isFocusModeSupported(AVCaptureFocusMode.ContinuousAutoFocus)) {
+			captureDevice.focusMode = AVCaptureFocusMode.ContinuousAutoFocus
+		}
 		captureDevice.unlockForConfiguration()
 		// Get an instance of the AVCaptureDeviceInput class using the previous device object.
 //		let input:AVCaptureDeviceInput! = AVCaptureDeviceInput.deviceInputWithDevice(captureDevice) as AVCaptureDeviceInput?
@@ -114,7 +116,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		preview.clipsToBounds = false
 		captureSession.startRunning()
 		if (videoPreviewLayer == nil) {print("Running on the simulator"); return}
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "displayOverlayFromHistory:", name: kEntrySelectedFromHistoryNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QRViewController.displayOverlayFromHistory(_:)), name: kEntrySelectedFromHistoryNotification, object: nil)
 	}
 
 	//the video orientation is bound to the interface orientation
@@ -173,7 +175,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 
 	override func viewDidDisappear(animated: Bool) {
-		for var i = self.layers.count - 1 ; i >= 0; --i {
+		for var i = self.layers.count - 1 ; i >= 0; i -= 1 {
 			self.layers[i].removeFromSuperlayer()
 		}
 		layers = [QRLayer]()
@@ -185,7 +187,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		if metadataObjects.count ==  0 { return }
 		var i : Int = 0
 		dispatch_async(dispatch_get_main_queue(), { () -> Void in
-			for ; i < metadataObjects.count ; i++ {
+			for ; i < metadataObjects.count ; i += 1 {
 				var object = metadataObjects[i] as! AVMetadataMachineReadableCodeObject
 				if let type = object.type {
 					if type != AVMetadataObjectTypeQRCode {
@@ -201,7 +203,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 						index = self.layers[i]
 					}
 					var arrayOfPoints = [CGPoint]()
-					for var j = 0; j < object.corners.count; j++ {
+					for j in 0 ..< object.corners.count {
 						var newPoint = CGPointZero
 						let pointDict = object.corners[j] as? NSDictionary
 						CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
@@ -229,7 +231,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		message.textColor = UIColor.whiteColor()
 		let size = message.sizeThatFits(CGSizeMake(self.view.bounds.size.width, 200))
 		message.frame = CGRectMake(self.view.bounds.size.width/2 - size.width/2, self.preview.frame.origin.y, size.width, size.height)
-		NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: Selector("hideMessage:"), userInfo:["view":message], repeats: false)
+		NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: #selector(QRViewController.hideMessage(_:)), userInfo:["view":message], repeats: false)
 	}
 
 	func hideMessage(timer: NSTimer) {
@@ -250,7 +252,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			for layer in self.preview.layer.sublayers as [CALayer]! {
 				let convertedPoint = self.view.layer.convertPoint(touchPoint, toLayer: layer)
 				if !(layer is QRLayer) {continue}
-				if CGPathContainsPoint((layer as! QRLayer).path, nil, convertedPoint, true) {
+				if CGPathContainsPoint((layer as! QRLayer).path!, nil, convertedPoint, true) {
 					self.selectedLayer = (layer as! QRLayer)
 
 					let newHistory = HistoryEntry()

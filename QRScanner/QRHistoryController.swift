@@ -28,7 +28,7 @@ class QRHistoryController: UITableViewController {
 		let refresh = UIRefreshControl()
 		refresh.backgroundColor = UIColor.orangeColor()
 		refresh.tintColor = UIColor.whiteColor()
-		refresh.addTarget(self, action: "refreshHistory:", forControlEvents: UIControlEvents.ValueChanged)
+		refresh.addTarget(self, action: #selector(QRHistoryController.refreshHistory(_:)), forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refresh
 		self.tableView.allowsMultipleSelectionDuringEditing = true
 
@@ -103,7 +103,7 @@ class QRHistoryController: UITableViewController {
 	
 	func removeSelectedEntries() {
 		if let array = self.tableView.indexPathsForSelectedRows as [NSIndexPath]! {
-			for var i = array.count - 1; i >= 0 ; --i {
+			for var i = array.count - 1; i >= 0 ; i -= 1 {
 				history.markRowForDeletion(array[i].row)
 			}
 			history.saveInfo(nil)

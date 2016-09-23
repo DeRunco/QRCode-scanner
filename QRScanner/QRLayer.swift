@@ -32,7 +32,7 @@ class QRLayer: CAShapeLayer {
 		CGPathCloseSubpath(path)
 		self.path = path
 		self.fillRule = kCAFillRuleEvenOdd
-		self.timer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "timeout:", userInfo: nil, repeats: false)
+		self.timer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: #selector(QRLayer.timeout(_:)), userInfo: nil, repeats: false)
 	}
 	
 	@objc func timeout(timer: NSTimer) {
