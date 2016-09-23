@@ -103,7 +103,7 @@ class QRHistoryController: UITableViewController {
 	
 	func removeSelectedEntries() {
 		if let array = self.tableView.indexPathsForSelectedRows as [NSIndexPath]! {
-			for var i = array.count - 1; i >= 0 ; i -= 1 {
+			for i in (array.count ... 0) {
 				history.markRowForDeletion(array[i].row)
 			}
 			history.saveInfo(nil)

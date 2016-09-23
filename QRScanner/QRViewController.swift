@@ -65,11 +65,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			return
 		}
 		let captureDevice:AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
-		let bob = NSErrorPointer()
 		do {
 			try captureDevice.lockForConfiguration()
 		} catch let error as NSError {
-			bob.memory = error
+			print("An error occured: \(error)")
 		}
 		if (captureDevice.isFocusModeSupported(AVCaptureFocusMode.ContinuousAutoFocus)) {
 			captureDevice.focusMode = AVCaptureFocusMode.ContinuousAutoFocus
@@ -175,8 +174,8 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 
 	override func viewDidDisappear(animated: Bool) {
-		for var i = self.layers.count - 1 ; i >= 0; i -= 1 {
-			self.layers[i].removeFromSuperlayer()
+		for layer in self.layers {
+			layer.removeFromSuperlayer()
 		}
 		layers = [QRLayer]()
 	}
@@ -185,39 +184,43 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		if !isScanning { return }
 		if metadataObjects == nil { return }
 		if metadataObjects.count ==  0 { return }
-		var i : Int = 0
-		dispatch_async(dispatch_get_main_queue(), { () -> Void in
-			for ; i < metadataObjects.count ; i += 1 {
-				var object = metadataObjects[i] as! AVMetadataMachineReadableCodeObject
-				if let type = object.type {
-					if type != AVMetadataObjectTypeQRCode {
-						return
-					}
-					object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(object) as! AVMetadataMachineReadableCodeObject
-					var index: QRLayer
-					if self.layers.count <= i {
-						index = QRLayer()
-						self.preview.layer.addSublayer(index)
-						self.layers.append(index)
-					} else {
-						index = self.layers[i]
-					}
-					var arrayOfPoints = [CGPoint]()
-					for j in 0 ..< object.corners.count {
-						var newPoint = CGPointZero
-						let pointDict = object.corners[j] as? NSDictionary
-						CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
-						newPoint = self.videoPreviewLayer.superlayer!.convertPoint(newPoint, fromLayer: self.videoPreviewLayer)
-						arrayOfPoints.append(newPoint)
-					}
-					
-					index.qrString = object.stringValue
+		
+		let mObj = metadataObjects?.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
+			($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObjectTypeQRCode } as! [AVMetadataMachineReadableCodeObject]
 
-					let newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
-					index.updateLocation(newRect, corners: arrayOfPoints)
-//					self.updateSelectedLayer()
-					index.lowerColors = (self.qrOverlay != nil)
+		var counter: Int = 0
+		dispatch_async(dispatch_get_main_queue(), { () -> Void in
+			for obj in mObj{
+				let object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(obj) as! AVMetadataMachineReadableCodeObject
+				var index: QRLayer
+				
+				if self.layers.count <= counter {
+					index = QRLayer()
+					self.preview.layer.addSublayer(index)
+					self.layers.append(index)
+				} else {
+					index = self.layers[counter]
 				}
+				// because ++ are only used in C-style for loops, which are signs of Evil and Cute-But-Difficult-to-Understand Code, and Chris Lattner doesn't like it
+				// https://stackoverflow.com/questions/35158422/the-and-operators-have-been-deprecated-xcode-7-3
+				
+				counter += 1
+				var arrayOfPoints = [CGPoint]()
+				// this range syntax pleases Chris Lattner because it is clear.
+				for j in 0 ..< object.corners.count {
+					var newPoint = CGPointZero
+					let pointDict = object.corners[j] as? NSDictionary
+					CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
+					newPoint = self.videoPreviewLayer.superlayer!.convertPoint(newPoint, fromLayer: self.videoPreviewLayer)
+					arrayOfPoints.append(newPoint)
+				}
+				
+				index.qrString = object.stringValue
+
+				let newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
+				index.updateLocation(newRect, corners: arrayOfPoints)
+//					self.updateSelectedLayer()
+				index.lowerColors = (self.qrOverlay != nil)
 			}
 		})
 	}
