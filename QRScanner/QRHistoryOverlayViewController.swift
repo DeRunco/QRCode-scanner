@@ -8,8 +8,8 @@
 
 import UIKit
 
-var selectedTintColor = UIColor.blueColor()
-let unselectedTintColor = UIColor.blackColor()
+var selectedTintColor = UIColor.blue
+let unselectedTintColor = UIColor.black
 
 class QRHistoryOverlayViewController: UIViewController {
 	@IBOutlet var qrstring: UILabel!
@@ -40,7 +40,7 @@ class QRHistoryOverlayViewController: UIViewController {
 		// Do any additional setup after loading the view.
 	}
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		self.updateFavoriteStatus()
 	}

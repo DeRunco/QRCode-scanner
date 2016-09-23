@@ -55,35 +55,35 @@ class QRHistoryController: UITableViewController {
 		cell.title!.text = "\(history.cachedHistory[indexPath.row].string)"
 		let dateFor = DateFormatter()
 		dateFor.dateFormat = "YYYY-MM-dd HH:mm"
-		let dateDisplay = dateFor.stringFromDate(history.cachedHistory[indexPath.row].date)
+		let dateDisplay = dateFor.string(from:history.cachedHistory[indexPath.row].date)
 		cell.detail!.text = "\(dateDisplay)"
 		return cell
 	}
 
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 56.0
 	}
 
-	override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
 		return true
 	}
-
-	override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-		if (editingStyle == UITableViewCellEditingStyle.Delete) {
-			history.cachedHistory.removeAtIndex(indexPath.row)
-			history.saveInfo(nil)
+	
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+		if (editingStyle == UITableViewCellEditingStyle.delete) {
+			history.cachedHistory.remove(at:indexPath.row)
+			history.saveInfo(entries: nil)
 			history.loadInfo()
-			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+			tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
 		}
 	}
 
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		if tableView.editing {return}
-		tableView.deselectRowAtIndexPath(indexPath, animated: true)
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		if tableView.isEditing {return}
+		tableView.deselectRow(at: indexPath, animated: true)
 		//display the overlay
 		let entry = history.cachedHistory[indexPath.row]
-		NSNotificationCenter.defaultCenter().postNotificationName(kEntrySelectedFromHistoryNotification, object: nil, userInfo:[kEntryUserInfo:entry])
-		self.performSegueWithIdentifier("removePopover", sender: self)
+		NotificationCenter.default.post(name: Notification.Name(kEntrySelectedFromHistoryNotification), object: nil, userInfo:[kEntryUserInfo:entry])
+		self.performSegue(withIdentifier:"removePopover", sender: self)
 	}
 
 	func refreshHistory(sender: AnyObject!) {
@@ -93,29 +93,28 @@ class QRHistoryController: UITableViewController {
 	}
 
 	@IBAction func showScanner (sender: AnyObject) {
-	    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.PrimaryHidden
+	    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.primaryHidden
 	}
 	
 	@IBAction func cancel(sender: UIBarButtonItem) {
-		self.performSegueWithIdentifier("removePopover", sender: self)
+		self.performSegue(withIdentifier:"removePopover", sender: self)
 	}
 	
 	
 	func removeSelectedEntries() {
-		if let array = self.tableView.indexPathsForSelectedRows as [NSIndexPath]! {
-			//for i in array.indices.reversed() { //swift 3
-			for i in (array.count ... 0) {
-				history.markRowForDeletion(array[i].row)
+		if let array = self.tableView.indexPathsForSelectedRows as [IndexPath]! {
+			for i in array.indices.reversed() {
+				history.markRowForDeletion(row:array[i].row)
 			}
-			history.saveInfo(nil)
-			tableView.deleteRowsAtIndexPaths(array, withRowAnimation: UITableViewRowAnimation.Fade)
+			history.saveInfo(entries: nil)
+			tableView.deleteRows(at:array, with: UITableViewRowAnimation.fade)
 		}
 
 	}
 
 
 	@IBAction func startEditMode(sender: AnyObject) {
-		if (self.tableView.editing){
+		if (self.tableView.isEditing){
 			if let butSender: UIBarButtonItem = sender as? UIBarButtonItem {
 				butSender.tintColor = nil
 			}
@@ -124,7 +123,7 @@ class QRHistoryController: UITableViewController {
 			self.tableView.setEditing(false, animated: true);
 		} else {
 			if let butSender: UIBarButtonItem = sender as? UIBarButtonItem {
-				butSender.tintColor = UIColor.redColor()
+				butSender.tintColor = UIColor.red
 			}
 			self.tableView.setEditing(true, animated: true);
 		}
