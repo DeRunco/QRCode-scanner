@@ -19,23 +19,24 @@ class QRHistoryOverlayViewController: UIViewController {
 	
 	var historyToDisplay: HistoryEntry! {
 		didSet {
-			NSNotificationCenter.defaultCenter().removeObserver(self)
+			NotificationCenter.default.removeObserver(self)
 			if (self.qrstring == nil) { return }
-			NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QRHistoryOverlayViewController.favoriteUpdate(_:)), name: kHistoryEntryUpdate, object:nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(self.favoriteUpdate(n:)),
+			                                       name: Notification.Name(kHistoryEntryUpdate), object:nil)
 			self.qrstring.text = self.historyToDisplay.string
-			var image = CIImage.createQRForString(self.historyToDisplay.string)
+			var image = CIImage.createQRForString(qrString: self.historyToDisplay!.string!)
 			let width = image.extent.width
 			let height = image.extent.height
-			let transform = CGAffineTransformMakeScale(100/width, 100/height)
-			image = image.imageByApplyingTransform(transform)
-			self.image.image = UIImage(CIImage: image)
+			let transform = CGAffineTransform(scaleX: 100/width, y: 100/height)
+			image = image.applying(transform)
+			self.image.image = UIImage(ciImage: image)
 		}
 	}
 	
 	override func viewDidLoad() {
 		selectedTintColor = self.view.tintColor
 		super.viewDidLoad()
-		qrstring.userInteractionEnabled = false
+		qrstring.isUserInteractionEnabled = false
 		self.configureDisplay()
 		// Do any additional setup after loading the view.
 	}
@@ -45,8 +46,9 @@ class QRHistoryOverlayViewController: UIViewController {
 		self.updateFavoriteStatus()
 	}
 	
-	override func viewWillDisappear(animated: Bool) {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		NotificationCenter.default.removeObserver(self)
 	}
 	
 	override func didReceiveMemoryWarning() {
@@ -56,10 +58,10 @@ class QRHistoryOverlayViewController: UIViewController {
 	
 
 
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		var touchIsIn = false
 		for touch in touches {
-			if (CGRectContainsPoint(self.image.frame, touch.locationInView(self.view))) {
+			if (self.image.frame.contains(touch.location(in:self.view))) {
 				touchIsIn = true
 				self.validate()
 			}
@@ -77,42 +79,41 @@ class QRHistoryOverlayViewController: UIViewController {
 	}
 	
 	func updateContent() {
-		dispatch_async(dispatch_get_main_queue(), { () -> Void in
+		DispatchQueue.main.async {
 			self.qrstring.text = self.historyToDisplay.string
-			var image = CIImage.createQRForString(self.historyToDisplay.string)
+			var image = CIImage.createQRForString(qrString: self.historyToDisplay.string)
 			let width = image.extent.width
 			let height = image.extent.height
-			let transform = CGAffineTransformMakeScale(100/width, 100/height)
-			image = image.imageByApplyingTransform(transform)
-			self.image.image = UIImage(CIImage: image)
-		})
+			let transform = CGAffineTransform(scaleX: 100/width, y: 100/height)
+			image = image.applying(transform)
+			self.image.image = UIImage(ciImage: image)
+		}
 	}
 	
 	func updateFavoriteStatus () {
-		dispatch_async(dispatch_get_main_queue(), { () -> Void in
-			self.favorite.tintColor = history.isAlreadySaved(self.historyToDisplay) ? selectedTintColor : unselectedTintColor
-		})
+		DispatchQueue.main.async {
+			self.favorite.tintColor = history.isAlreadySaved(his: self.historyToDisplay) ? selectedTintColor : unselectedTintColor
+		}
 	}
 	
 	func updateBackground() {
-		dispatch_async(dispatch_get_main_queue(), { () -> Void in
+		DispatchQueue.main.async {
 			if !UIAccessibilityIsReduceTransparencyEnabled() {
-				self.view.backgroundColor = UIColor.clearColor()
-				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
+				self.view.backgroundColor = UIColor.clear
+				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
 				let blurEffectView = UIVisualEffectView(effect: blurEffect)
 				
 				//always fill the view
 				blurEffectView.frame = self.view.bounds
-				blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+				blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 				
 				self.view.addSubview(blurEffectView)
-				self.view.sendSubviewToBack(blurEffectView)
+				self.view.sendSubview(toBack: blurEffectView)
 				
 			} else {
 				self.view.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
 			}
-			
-		})
+		}
 	}
 	
 	func favoriteUpdate(n: NSNotification) {
@@ -120,24 +121,24 @@ class QRHistoryOverlayViewController: UIViewController {
 	}
 	
 	func cancel() {
-		(self.parentViewController! as! QRViewController).removeOverlay(self)
+		(self.parent! as! QRViewController).removeOverlay(vc: self)
 	}
 	
 	@IBAction func validate() {
-		(self.parentViewController! as! QRViewController).openQR(qrstring.text)
+		(self.parent! as! QRViewController).openQR(openURL: qrstring.text)
 	}
 	
 	@IBAction func updateHistory(sender : UIButton) {
 		let currentcolor = self.view.backgroundColor
-		self.view.backgroundColor = UIColor.whiteColor()
-		UIView.animateWithDuration(0.3, animations: { () -> Void in
+		self.view.backgroundColor = UIColor.white
+		UIView.animate(withDuration: 0.3) { 
 			self.view.backgroundColor = currentcolor
-		})
-		
-		if (history.isAlreadySaved(self.historyToDisplay)) {
-			history.removeHistory(self.historyToDisplay)
+		}
+
+		if (history.isAlreadySaved(his:self.historyToDisplay)) {
+			history.removeHistory(historyDescription:self.historyToDisplay)
 		} else {
-			history.saveInfo([self.historyToDisplay!])
+			history.saveInfo(entries:[self.historyToDisplay!])
 		}
 		self.updateFavoriteStatus()
 	}

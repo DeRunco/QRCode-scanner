@@ -12,8 +12,8 @@ import AVFoundation
 
 extension CIImage {
 	
-	class func createQRForString(qrString: NSString) ->CIImage {
-		let stringData = qrString.dataUsingEncoding(NSISOLatin1StringEncoding.rawValue)
+	class func createQRForString(qrString: String) ->CIImage {
+		let stringData = qrString.data(using: String.Encoding.utf8)
 		let qrFilter = CIFilter(name:"CIQRCodeGenerator")
 		qrFilter!.setValue(stringData, forKey: "inputMessage")
 		return qrFilter!.outputImage!
