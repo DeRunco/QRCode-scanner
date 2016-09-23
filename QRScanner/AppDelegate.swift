@@ -16,12 +16,12 @@ func ==(lhs: HistoryEntry, rhs: HistoryEntry) -> Bool {
 
 
 class HistoryEntry: NSObject, NSCoding{
-	var date: NSDate!
+	var date: Date!
 	var string: String!
 	var deletionMark: Bool = false
 	var favorited: Bool = false {
 		didSet {
-			NSNotificationCenter.defaultCenter().postNotificationName(kHistoryEntryUpdate, object: nil)
+			NotificationCenter.default.post(name: Notification.Name(kHistoryEntryUpdate), object: nil)
 		}
 	}
 	override init() {
@@ -29,17 +29,17 @@ class HistoryEntry: NSObject, NSCoding{
 	}
 
 	required init?(coder aDecoder: NSCoder) {
-		self.date = aDecoder.decodeObjectForKey("date") as! NSDate
-		self.string = aDecoder.decodeObjectForKey("string") as! String
-		self.deletionMark = aDecoder.decodeBoolForKey("deletion")
-		self.favorited = aDecoder.decodeBoolForKey("favorited")
+		self.date = aDecoder.decodeObject(forKey: "date") as! Date
+		self.string = aDecoder.decodeObject(forKey:"string") as! String
+		self.deletionMark = aDecoder.decodeBool(forKey:"deletion")
+		self.favorited = aDecoder.decodeBool(forKey:"favorited")
 	}
 
-	func encodeWithCoder(aCoder: NSCoder) {
-		aCoder.encodeObject(date, forKey: "date")
-		aCoder.encodeObject(string, forKey: "string")
-		aCoder.encodeBool(deletionMark, forKey: "deletion")
-		aCoder.encodeBool(favorited, forKey: "favorited")
+	func encode(with aCoder: NSCoder) {
+		aCoder.encode(date, forKey: "date")
+		aCoder.encode(string, forKey: "string")
+		aCoder.encode(deletionMark, forKey: "deletion")
+		aCoder.encode(favorited, forKey: "favorited")
 	}
 	
 	func toString() -> String {
@@ -71,14 +71,18 @@ class HistoryStorage{
 	}
 	
 	func loadInfo() {
-		cachedHistory.removeAll(keepCapacity: true)
-		let archivedHistory: NSData! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSData!
+		cachedHistory.removeAll(keepingCapacity: true)
+		let archivedHistory: Data! = UserDefaults.standard.object(forKey:kHistoryStorage) as! Data!
 		if archivedHistory == nil { return }
-		let history = NSKeyedUnarchiver.unarchiveObjectWithData(archivedHistory) as! [HistoryEntry]!
-		for entry in history {
+		let history = NSKeyedUnarchiver.unarchiveObject(with:archivedHistory) as! [HistoryEntry]!
+		guard history != nil else {
+			return
+		}
+		for entry in history! {
 			if (entry.deletionMark) {continue}
 			cachedHistory.append(entry)
 		}
+
 	}
 	
 	func removeHistory(historyDescription: HistoryEntry){
@@ -87,7 +91,7 @@ class HistoryStorage{
 				bob.deletionMark = true
 			}
 		}
-		self.saveInfo(nil)
+		self.saveInfo(entries:nil)
 	}
 	
 	func markRowForDeletion(row: Int){
@@ -102,9 +106,9 @@ class HistoryStorage{
 			}
 		}
 		
-		let dataForm = NSKeyedArchiver.archivedDataWithRootObject(cachedHistory)
-		NSUserDefaults.standardUserDefaults().setObject(dataForm, forKey: kHistoryStorage)
-		NSUserDefaults.standardUserDefaults().synchronize()
+		let dataForm = NSKeyedArchiver.archivedData(withRootObject:cachedHistory)
+		UserDefaults.standard.set(dataForm, forKey: kHistoryStorage)
+		UserDefaults.standard.synchronize()
 		self.loadInfo()
 	}
 }
@@ -115,30 +119,30 @@ let history = HistoryStorage()
 class AppDelegate: UIResponder, UIApplicationDelegate {
 	var window: UIWindow?
 
-	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 		history.loadInfo()
 		return true
 	}
 
-	func applicationWillResignActive(application: UIApplication) {
+	func applicationWillResignActive(_ application: UIApplication) {
 		// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
 		// Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 	}
 
-	func applicationDidEnterBackground(application: UIApplication) {
+	func applicationDidEnterBackground(_ application: UIApplication) {
 		// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
 		// If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 	}
 
-	func applicationWillEnterForeground(application: UIApplication) {
+	func applicationWillEnterForeground(_ application: UIApplication) {
 		// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 	}
 
-	func applicationDidBecomeActive(application: UIApplication) {
+	func applicationDidBecomeActive(_ application: UIApplication) {
 		// Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 	}
 
-	func applicationWillTerminate(application: UIApplication) {
+	func applicationWillTerminate(_ application: UIApplication) {
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 

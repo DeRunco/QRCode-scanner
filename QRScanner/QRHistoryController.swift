@@ -26,34 +26,34 @@ class QRHistoryController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		let refresh = UIRefreshControl()
-		refresh.backgroundColor = UIColor.orangeColor()
-		refresh.tintColor = UIColor.whiteColor()
-		refresh.addTarget(self, action: #selector(QRHistoryController.refreshHistory(_:)), forControlEvents: UIControlEvents.ValueChanged)
+		refresh.backgroundColor = UIColor.orange
+		refresh.tintColor = UIColor.white
+		refresh.addTarget(self, action: #selector(self.refreshHistory(sender:)),
+		                  for: UIControlEvents.valueChanged)
 		self.refreshControl = refresh
 		self.tableView.allowsMultipleSelectionDuringEditing = true
-
 	}
 	
 
 
 	func removeEntry(index: Int) {
-		history.cachedHistory.removeAtIndex(index)
+		history.cachedHistory.remove(at:index)
 	}
 
-	override	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	override func numberOfSections(in tableView: UITableView) -> Int {
 		history.loadInfo()
 		return history.isThereFavorites() ? 2 : 1;
 	}
 
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		history.loadInfo()
 		return history.cachedHistory.count
 	}
 
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier(historyCellId, forIndexPath: indexPath) as! HistoryControllerCell
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier:historyCellId, for: indexPath) as! HistoryControllerCell
 		cell.title!.text = "\(history.cachedHistory[indexPath.row].string)"
-		let dateFor = NSDateFormatter()
+		let dateFor = DateFormatter()
 		dateFor.dateFormat = "YYYY-MM-dd HH:mm"
 		let dateDisplay = dateFor.stringFromDate(history.cachedHistory[indexPath.row].date)
 		cell.detail!.text = "\(dateDisplay)"
