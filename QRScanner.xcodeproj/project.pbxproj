@@ -16,6 +16,7 @@
 		566BF5711B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */; };
 		56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A1D58C1B46B52C00EA9336 /* Images.xcassets */; };
 		56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB551B457BC700A95D2C /* Main.storyboard */; };
+		FB8281581D95A6DD0095D446 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FB8281571D95A6DD0095D446 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		56670B141C185FC3002D5133 /* QRNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRNavigationController.swift; sourceTree = "<group>"; };
 		566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRHistoryOverlayViewController.swift; sourceTree = "<group>"; };
 		56A1D58C1B46B52C00EA9336 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FB8281571D95A6DD0095D446 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +48,7 @@
 		562DCB071B45341C00A95D2C = {
 			isa = PBXGroup;
 			children = (
+				FB8281571D95A6DD0095D446 /* InfoPlist.strings */,
 				562DCB121B45341C00A95D2C /* QRScanner */,
 				562DCB111B45341C00A95D2C /* Products */,
 			);
@@ -147,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */,
+				FB8281581D95A6DD0095D446 /* InfoPlist.strings in Resources */,
 				56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */,
 				562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */,
 			);

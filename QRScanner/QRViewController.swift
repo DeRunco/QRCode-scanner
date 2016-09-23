@@ -167,10 +167,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 	}
 
-//	override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
-//		return UIInterfaceOrientation.Portrait
-//	}
-
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
 		for layer in self.layers {
@@ -239,16 +235,15 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 //	}
 	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		guard let _ = self.qrOverlay else {
+		if self.qrOverlay != nil {
 			super.touchesEnded(touches, with: event)
 			return
 		}
-		
 		for touch in touches {
 			let touchPoint = touch.location(in:self.view)
 			for layer in self.preview.layer.sublayers as [CALayer]! {
 				let convertedPoint = self.view.layer.convert(touchPoint, to: layer)
-				if !(layer is QRLayer) {continue}
+				if !(layer is QRLayer) { continue }
 				
 				if (layer as! QRLayer).path!.contains(convertedPoint) {
 					self.selectedLayer = (layer as! QRLayer)
@@ -263,7 +258,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				}
 			}
 		}
-
+		super.touchesEnded(touches, with: event)
 	}
 	
 
