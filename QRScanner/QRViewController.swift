@@ -254,11 +254,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 					self.displayOverlay(newHistory: newHistory)
 					//TODO add the history entry
-					return //no need to continue parsing throught the available QR
+					return
 				}
 			}
 		}
-		super.touchesEnded(touches, with: event)
+		
 	}
 	
 
@@ -275,32 +275,44 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 	
 	func displayOverlay(newHistory: HistoryEntry) {
-		if let _ = self.qrOverlay {
+//		if let _ = self.qrOverlay {
 //			self.qrOverlay.view.removeFromSuperview()
 //			self.qrOverlay.removeFromParentViewController()
 //			self.qrOverlay = nil
-		} else {
-			self.qrOverlay = self.storyboard!.instantiateViewController(withIdentifier:"QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
-		}
-		self.qrOverlay.historyToDisplay = newHistory
+//		} else {
+//			self.qrOverlay = self.storyboard!.instantiateViewController(withIdentifier:"QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
+//		}
+//		self.qrOverlay.historyToDisplay = newHistory
 		
-		self.qrOverlay.view.frame = CGRect(x:0, y:0, width:15, height:15)
-		self.qrOverlay.view.center = self.view.center
-		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
-		self.addChildViewController(self.qrOverlay)
-		self.view.addSubview(self.qrOverlay.view)
-	
-		let a = NSLayoutConstraint.constraints(withVisualFormat: "V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
-			views: ["navView":self.navigationController!.navigationBar, "overlay":self.qrOverlay.view!])
-		let b = NSLayoutConstraint.constraints(withVisualFormat:"H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
-		self.parent!.view.addConstraints(a)
-		self.parent!.view.addConstraints(b)
+//		self.qrOverlay.view.frame = CGRect(x:0, y:0, width:15, height:15)
+//		self.qrOverlay.view.center = self.view.center
+//		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
+//		self.addChildViewController(self.qrOverlay)
+//		self.view.addSubview(self.qrOverlay.view)
+//	
+//		let a = NSLayoutConstraint.constraints(withVisualFormat: "V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
+//			views: ["navView":self.navigationController!.navigationBar, "overlay":self.qrOverlay.view!])
+//		let b = NSLayoutConstraint.constraints(withVisualFormat:"H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
+//		self.parent!.view.addConstraints(a)
+//		self.parent!.view.addConstraints(b)
+		self.performSegue(withIdentifier: "tapQRCode", sender: newHistory);
 	}
 	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		guard sender is HistoryEntry else {
+			return;
+		}
+		(segue.destination as! QRHistoryOverlayViewController).mainVC = self;
+		(segue.destination as! QRHistoryOverlayViewController).historyToDisplay = (sender as! HistoryEntry)
+	}
 	
 	func openQR(openURL: String!) {
 		if openURL != nil {
 			let url = URL(string: openURL!)
+			guard url != nil else {
+				self.displayMessage(mess: "Not a URL", time: 3.0);
+				return
+			}
 			UIApplication.shared.openURL(url!)
 		}
 	}

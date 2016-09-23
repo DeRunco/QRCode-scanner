@@ -16,6 +16,7 @@ class QRHistoryOverlayViewController: UIViewController {
 	@IBOutlet var image: UIImageView!
 	@IBOutlet var favorite: UIButton!
 	@IBOutlet var launch: UIButton!
+	var mainVC: QRViewController!
 	
 	var historyToDisplay: HistoryEntry! {
 		didSet {
@@ -121,11 +122,18 @@ class QRHistoryOverlayViewController: UIViewController {
 	}
 	
 	func cancel() {
-		(self.parent! as! QRViewController).removeOverlay(vc: self)
+		guard self.presentingViewController != nil else {
+			return
+		}
+		self.presentingViewController!.dismiss(animated: true, completion: nil)
 	}
 	
 	@IBAction func validate() {
-		(self.parent! as! QRViewController).openQR(openURL: qrstring.text)
+		guard self.presentingViewController != nil else {
+			return
+		}
+		self.presentingViewController!.dismiss(animated: true, completion: nil)
+		self.mainVC!.openQR(openURL: qrstring.text)
 	}
 	
 	@IBAction func updateHistory(sender : UIButton) {
