@@ -74,12 +74,10 @@ class HistoryStorage{
 		cachedHistory.removeAll(keepCapacity: true)
 		let archivedHistory: NSData! = NSUserDefaults.standardUserDefaults().objectForKey(kHistoryStorage) as! NSData!
 		if archivedHistory == nil { return }
-		let history = NSKeyedUnarchiver.unarchiveObjectWithData(archivedHistory) as! NSArray!
-		for count in 0 ..< history.count {
-			if let entry = history[count] as? HistoryEntry{
-				if (entry.deletionMark) {continue}
-				cachedHistory.append(entry)
-			}
+		let history = NSKeyedUnarchiver.unarchiveObjectWithData(archivedHistory) as! [HistoryEntry]!
+		for entry in history {
+			if (entry.deletionMark) {continue}
+			cachedHistory.append(entry)
 		}
 	}
 	
@@ -99,7 +97,7 @@ class HistoryStorage{
 
 	func saveInfo(entries:[HistoryEntry]!) {
 		if (entries != nil) {
-			for entry:HistoryEntry in entries {
+			for entry in entries {
 				cachedHistory.append(entry)
 			}
 		}

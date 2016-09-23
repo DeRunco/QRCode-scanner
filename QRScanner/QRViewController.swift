@@ -181,9 +181,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 
 	func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
-		if !isScanning { return }
-		if metadataObjects == nil { return }
-		if metadataObjects.count ==  0 { return }
+		guard isScanning else { return }
+		guard metadataObjects != nil else { return }
+		guard metadataObjects.count != 0 else { return }
 		
 		let mObj = metadataObjects?.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
 			($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObjectTypeQRCode } as! [AVMetadataMachineReadableCodeObject]
@@ -201,12 +201,14 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				} else {
 					index = self.layers[counter]
 				}
-				// because ++ are only used in C-style for loops, which are signs of Evil and Cute-But-Difficult-to-Understand Code, and Chris Lattner doesn't like it
+				// because ++ are only used in C-style for loops, and are are signs of Evil and Cute-But-Difficult-to-Understand Code. Also Chris Lattner doesn't like them.
 				// https://stackoverflow.com/questions/35158422/the-and-operators-have-been-deprecated-xcode-7-3
-				
 				counter += 1
+				
 				var arrayOfPoints = [CGPoint]()
+
 				// this range syntax pleases Chris Lattner because it is clear.
+				// for j in object.corners.indices { // to be fair it is better in swift 3
 				for j in 0 ..< object.corners.count {
 					var newPoint = CGPointZero
 					let pointDict = object.corners[j] as? NSDictionary
@@ -250,6 +252,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			super.touchesEnded(touches, withEvent: event)
 			return
 		}
+		
 		for touch in touches {
 			let touchPoint = touch.locationInView(self.view)
 			for layer in self.preview.layer.sublayers as [CALayer]! {

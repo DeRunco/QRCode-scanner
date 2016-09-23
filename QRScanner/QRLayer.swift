@@ -13,7 +13,6 @@ let QRCornerRadius:CGFloat = 10
 
 class QRLayer: CAShapeLayer {
 	var qrString: String = ""
-	var points: [CGPoint]!
 	var timer: NSTimer!
 	/// This field tells the layer that the currently selected QR has the same textfield as the QR covered by this layer.
 	var lowerColors = false
@@ -21,7 +20,6 @@ class QRLayer: CAShapeLayer {
 
 	func updateLocation(frame: CGRect, corners: [CGPoint]) {
 		self.frame = frame
-		self.points = corners
 		self.frame = self.bounds
 		self.fillColor = lowerColors ? UIColor(red: 0.15, green: 0.15, blue: 0.65, alpha: 0.55).CGColor : UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).CGColor
 		let path = CGPathCreateMutable()
