@@ -35,7 +35,7 @@ class QRLayer: CAShapeLayer {
 		
 		self.path = path
 		self.fillRule = kCAFillRuleEvenOdd
-		self.timer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.timeout(timer:)), userInfo: nil, repeats: false)
+		self.timer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(timeout(timer:)), userInfo: nil, repeats: false)
 	}
 	
 	@objc func timeout(timer: Timer) {

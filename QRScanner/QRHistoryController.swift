@@ -28,7 +28,7 @@ class QRHistoryController: UITableViewController {
 		let refresh = UIRefreshControl()
 		refresh.backgroundColor = UIColor.orange
 		refresh.tintColor = UIColor.white
-		refresh.addTarget(self, action: #selector(self.refreshHistory(sender:)),
+		refresh.addTarget(self, action: #selector(refreshHistory(sender:)),
 		                  for: UIControlEvents.valueChanged)
 		self.refreshControl = refresh
 		self.tableView.allowsMultipleSelectionDuringEditing = true

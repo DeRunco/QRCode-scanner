@@ -22,7 +22,7 @@ class QRHistoryOverlayViewController: UIViewController {
 		didSet {
 			NotificationCenter.default.removeObserver(self)
 			if (self.qrstring == nil) { return }
-			NotificationCenter.default.addObserver(self, selector: #selector(self.favoriteUpdate(n:)),
+			NotificationCenter.default.addObserver(self, selector: #selector(favoriteUpdate(n:)),
 			                                       name: Notification.Name(kHistoryEntryUpdate), object:nil)
 			self.qrstring.text = self.historyToDisplay.string
 			var image = CIImage.createQRForString(qrString: self.historyToDisplay!.string!)

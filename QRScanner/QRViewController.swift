@@ -115,8 +115,8 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		preview.layer.borderWidth = 1
 		preview.clipsToBounds = false
 		captureSession.startRunning()
-		if (videoPreviewLayer == nil) {print("Running on the simulator"); return}
-		NotificationCenter.default.addObserver(self, selector: #selector(self.displayOverlayFromHistory(notification:)),
+		if (videoPreviewLayer == nil) { print("Running on the simulator"); return }
+		NotificationCenter.default.addObserver(self, selector: #selector(displayOverlayFromHistory(notification:)),
 		                                       name: Notification.Name(kEntrySelectedFromHistoryNotification), object: nil)
 	}
 
@@ -222,7 +222,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		let size = message.sizeThatFits(CGSize(width:self.view.bounds.size.width, height:200))
 		message.frame = CGRect(x:self.view.bounds.size.width/2 - size.width/2, y:self.preview.frame.origin.y,
 		                       width: size.width, height:size.height)
-		Timer.scheduledTimer(timeInterval:time, target: self, selector: #selector(self.hideMessage(timer:)),
+		Timer.scheduledTimer(timeInterval:time, target: self, selector: #selector(hideMessage(timer:)),
 		                     userInfo:message, repeats: false)
 	}
 
