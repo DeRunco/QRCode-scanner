@@ -138,9 +138,9 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		var shouldRotate = true
 		switch (toOrientation) {
 		case .portrait: angle = 0
-		case .portraitUpsideDown: angle = CGFloat(M_PI)
-		case .landscapeRight: angle = CGFloat(M_PI_2)
-		case .landscapeLeft: angle = CGFloat(-M_PI_2)
+		case .portraitUpsideDown: angle = CGFloat(Double.pi)
+		case .landscapeRight: angle = CGFloat(Double.pi / 2)
+		case .landscapeLeft: angle = CGFloat(-Double.pi /2)
 		case .unknown: shouldRotate = false
 		}
 
