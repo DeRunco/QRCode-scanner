@@ -140,7 +140,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		case .portrait: angle = 0
 		case .portraitUpsideDown: angle = CGFloat(Double.pi)
 		case .landscapeRight: angle = CGFloat(Double.pi / 2)
-		case .landscapeLeft: angle = CGFloat(-Double.pi /2)
+		case .landscapeLeft: angle = CGFloat(-Double.pi / 2)
 		case .unknown: shouldRotate = false
 		}
 
