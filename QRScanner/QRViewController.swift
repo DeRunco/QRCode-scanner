@@ -60,19 +60,19 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		self.view.addSubview(message)
 		// Get an instance of the AVCaptureDevice class to initialize a device object and provide the video
 		// as the media type parameter.
-		if (AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo) == nil ) {
+		if (AVCaptureDevice.default(for: AVMediaType.video) == nil ) {
 			print("No capture device available - are we on Simulator? WTH, man?")
 			return
 		}
-		let captureDevice:AVCaptureDevice = AVCaptureDevice.defaultDevice(withMediaType:AVMediaTypeVideo)
+		let captureDevice:AVCaptureDevice = AVCaptureDevice.default(for:AVMediaType.video)!
 		do {
 			try captureDevice.lockForConfiguration()
 		} catch let error as NSError {
 			print("An error occured: \(error)")
 		}
-		if (captureDevice.isFocusModeSupported(AVCaptureFocusMode.continuousAutoFocus)) {
+		if (captureDevice.isFocusModeSupported(AVCaptureDevice.FocusMode.continuousAutoFocus)) {
 			captureDevice.focusPointOfInterest = CGPoint(x:0.5, y:0.5)
-			captureDevice.focusMode = AVCaptureFocusMode.continuousAutoFocus
+			captureDevice.focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
 		}
 		captureDevice.unlockForConfiguration()
 		// Get an instance of the AVCaptureDeviceInput class using the previous device object.
@@ -104,10 +104,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 		let dispatchQueue : DispatchQueue = DispatchQueue(label: "CaptureOutputQueue")
 		captureMetadataOutput.setMetadataObjectsDelegate(self, queue:dispatchQueue)
-		captureMetadataOutput.metadataObjectTypes = [AVMetadataObjectTypeQRCode]
+		captureMetadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
 		// Initialize the video preview layer and add it as a sublayer to the viewPreview view's layer.
 		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-		videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+		videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
 		videoPreviewLayer.contentsGravity = kCAGravityResizeAspectFill
 		//setup the view displaying the preview layer
 		preview.layer.addSublayer(videoPreviewLayer)
@@ -122,17 +122,17 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 	//the video orientation is bound to the interface orientation
 	func updateViewDisplayAccording(toOrientation: UIInterfaceOrientation) {
-		if captureOutput.connection(withMediaType:AVMediaTypeVideo) == nil {print("No video connection for \(captureOutput)"); return}
+		if captureOutput.connection(with:AVMediaType.video) == nil {print("No video connection for \(captureOutput)"); return}
 		var videoOrientation :AVCaptureVideoOrientation
 		switch (toOrientation) {
 		case .portrait: videoOrientation = AVCaptureVideoOrientation.portrait
 		case .landscapeLeft: videoOrientation = AVCaptureVideoOrientation.landscapeLeft
 		case .landscapeRight: videoOrientation = AVCaptureVideoOrientation.landscapeRight
 		case .portraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.portraitUpsideDown
-		case .unknown: videoOrientation = captureOutput.connection(withMediaType:AVMediaTypeVideo)!.videoOrientation
+		case .unknown: videoOrientation = captureOutput.connection(with:AVMediaType.video)!.videoOrientation
 		}
 		//pretty sure the connection rotation is not needed since we are not actually using the content.
-		captureOutput.connection(withMediaType:AVMediaTypeVideo)!.videoOrientation = videoOrientation
+		captureOutput.connection(with:AVMediaType.video)!.videoOrientation = videoOrientation
 
 		var angle: CGFloat = 0.0
 		var shouldRotate = true
@@ -175,13 +175,12 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		layers = [QRLayer]()
 	}
 
-	func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
+	func metadataOutput(_ captureOutput: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
 		guard isScanning else { return }
-		guard metadataObjects != nil else { return }
 		guard metadataObjects.count != 0 else { return }
 		
-		let mObj = metadataObjects?.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
-			($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObjectTypeQRCode } as! [AVMetadataMachineReadableCodeObject]
+		let mObj = metadataObjects.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
+			($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.qr } as! [AVMetadataMachineReadableCodeObject]
 
 		DispatchQueue.main.async {
 			for i in mObj.indices {
@@ -198,12 +197,10 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 				}
 				var arrayOfPoints = [CGPoint]()
 				for j in object.corners {
-					var newPoint = CGPoint(dictionaryRepresentation: j as! CFDictionary)
-					guard newPoint != nil else { continue }
-					newPoint = self.videoPreviewLayer.superlayer!.convert(newPoint!, from: self.videoPreviewLayer)
-					arrayOfPoints.append(newPoint!)
+					let newPoint = self.videoPreviewLayer.superlayer!.convert(j, from: self.videoPreviewLayer)
+					arrayOfPoints.append(newPoint)
 				}
-				index.qrString = object.stringValue
+				index.qrString = object.stringValue!
 				
 				let newRect = self.videoPreviewLayer.superlayer!.convert(object.bounds, from: self.videoPreviewLayer)
 				index.updateLocation(frame: newRect, corners: arrayOfPoints)
@@ -226,7 +223,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		                     userInfo:message, repeats: false)
 	}
 
-	func hideMessage(timer: Timer) {
+	@objc func hideMessage(timer: Timer) {
 		(timer.userInfo! as! UILabel).alpha = 0
 	}
 	
@@ -241,7 +238,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		}
 		for touch in touches {
 			let touchPoint = touch.location(in:self.view)
-			for layer in self.preview.layer.sublayers as [CALayer]! {
+			for layer in self.preview.layer.sublayers! as [CALayer] {
 				let convertedPoint = self.view.layer.convert(touchPoint, to: layer)
 				if !(layer is QRLayer) { continue }
 				
@@ -263,7 +260,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	
 
 
-	func displayOverlayFromHistory(notification: NSNotification) {
+	@objc func displayOverlayFromHistory(notification: NSNotification) {
 		self.navigationController!.popToRootViewController(animated:true)
 		DispatchQueue.main.async {
 			if let userInfo = notification.userInfo as? [String:HistoryEntry] {

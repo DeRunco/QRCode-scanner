@@ -29,7 +29,7 @@ class QRHistoryOverlayViewController: UIViewController {
 			let width = image.extent.width
 			let height = image.extent.height
 			let transform = CGAffineTransform(scaleX: 100/width, y: 100/height)
-			image = image.applying(transform)
+			image = image.transformed(by: transform)
 			self.image.image = UIImage(ciImage: image)
 		}
 	}
@@ -86,7 +86,7 @@ class QRHistoryOverlayViewController: UIViewController {
 			let width = image.extent.width
 			let height = image.extent.height
 			let transform = CGAffineTransform(scaleX: 100/width, y: 100/height)
-			image = image.applying(transform)
+			image = image.transformed(by: transform)
 			self.image.image = UIImage(ciImage: image)
 		}
 	}
@@ -117,7 +117,7 @@ class QRHistoryOverlayViewController: UIViewController {
 		}
 	}
 	
-	func favoriteUpdate(n: NSNotification) {
+	@objc func favoriteUpdate(n: NSNotification) {
 		self.updateFavoriteStatus()
 	}
 	

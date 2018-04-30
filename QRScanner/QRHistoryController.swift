@@ -86,7 +86,7 @@ class QRHistoryController: UITableViewController {
 		self.performSegue(withIdentifier:"removePopover", sender: self)
 	}
 
-	func refreshHistory(sender: AnyObject!) {
+	@objc func refreshHistory(sender: AnyObject!) {
 		history.loadInfo()
 		self.tableView.reloadData()
 		self.refreshControl!.endRefreshing()
