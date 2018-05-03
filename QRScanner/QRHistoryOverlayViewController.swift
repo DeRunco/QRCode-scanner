@@ -12,19 +12,20 @@ var selectedTintColor = UIColor.blue
 let unselectedTintColor = UIColor.black
 
 class QRHistoryOverlayViewController: UIViewController {
-	@IBOutlet var qrstring: UILabel!
+	@IBOutlet var qrstring: UITextView!
 	@IBOutlet var image: UIImageView!
-	@IBOutlet var favorite: UIButton!
+	@IBOutlet var favorite: UIBarButtonItem!
 	@IBOutlet var launch: UIButton!
+    @IBOutlet var textHeight: NSLayoutConstraint!
 	var mainVC: QRViewController!
 	
 	var historyToDisplay: HistoryEntry! {
 		didSet {
 			NotificationCenter.default.removeObserver(self)
-			if (self.qrstring == nil) { return }
+            if (self.qrstring == nil) { return }
 			NotificationCenter.default.addObserver(self, selector: #selector(favoriteUpdate(n:)),
 			                                       name: Notification.Name(kHistoryEntryUpdate), object:nil)
-			self.qrstring.text = self.historyToDisplay.string
+            self.qrstring.text = self.historyToDisplay.string
 			var image = CIImage.createQRForString(qrString: self.historyToDisplay!.string!)
 			let width = image.extent.width
 			let height = image.extent.height
@@ -37,7 +38,6 @@ class QRHistoryOverlayViewController: UIViewController {
 	override func viewDidLoad() {
 		selectedTintColor = self.view.tintColor
 		super.viewDidLoad()
-		qrstring.isUserInteractionEnabled = false
 		self.configureDisplay()
 		// Do any additional setup after loading the view.
 	}
@@ -45,40 +45,42 @@ class QRHistoryOverlayViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		self.updateFavoriteStatus()
+        self.title = self.historyToDisplay.string
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		NotificationCenter.default.removeObserver(self)
 	}
-	
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        coordinator .animate(alongsideTransition: { (context) in
+            self.updateTextSize()
+        }) { (context) in
+            
+        }
+    }
+    
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
 	}
 	
-
-
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		var touchIsIn = false
-		for touch in touches {
-			if (self.image.frame.contains(touch.location(in:self.view))) {
-				touchIsIn = true
-				self.validate()
-			}
-		}
-		if !touchIsIn {
-			self.cancel()
-		}
-	}
-
 	func configureDisplay() {
 		if self.historyToDisplay == nil { return }
-		self.updateBackground()
 		self.updateContent()
 		self.updateFavoriteStatus()
+        self.updateTextSize()
 	}
 	
+    func updateTextSize() {
+        DispatchQueue.main.async {
+            let fixedWidth = self.qrstring.frame.size.width
+            let newSize = self.qrstring.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+            self.textHeight.constant = newSize.height
+        }
+    }
+    
 	func updateContent() {
 		DispatchQueue.main.async {
 			self.qrstring.text = self.historyToDisplay.string
@@ -97,46 +99,18 @@ class QRHistoryOverlayViewController: UIViewController {
 		}
 	}
 	
-	func updateBackground() {
-		DispatchQueue.main.async {
-			if !UIAccessibilityIsReduceTransparencyEnabled() {
-				self.view.backgroundColor = UIColor.clear
-				let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
-				let blurEffectView = UIVisualEffectView(effect: blurEffect)
-				
-				//always fill the view
-				blurEffectView.frame = self.view.bounds
-				blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-				
-				self.view.addSubview(blurEffectView)
-				self.view.sendSubview(toBack: blurEffectView)
-				
-			} else {
-				self.view.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
-			}
-		}
-	}
-	
 	@objc func favoriteUpdate(n: NSNotification) {
 		self.updateFavoriteStatus()
 	}
 	
-	func cancel() {
-		guard self.presentingViewController != nil else {
-			return
-		}
-		self.presentingViewController!.dismiss(animated: true, completion: nil)
-	}
-	
-	@IBAction func validate() {
-		guard self.presentingViewController != nil else {
-			return
-		}
-		self.presentingViewController!.dismiss(animated: true, completion: nil)
-		self.mainVC!.openQR(openURL: qrstring.text)
-	}
-	
-	@IBAction func updateHistory(sender : UIButton) {
+    @IBAction func share(sender: UIBarButtonItem) {
+        let activity = UIActivityViewController(activityItems: [self.historyToDisplay.string], applicationActivities: nil)
+        self.present(activity, animated: true) {
+            
+        }
+    }
+    
+	@IBAction func updateHistory(sender : UIBarButtonItem) {
 		let currentcolor = self.view.backgroundColor
 		self.view.backgroundColor = UIColor.white
 		UIView.animate(withDuration: 0.3) { 

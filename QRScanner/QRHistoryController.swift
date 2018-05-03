@@ -52,7 +52,13 @@ class QRHistoryController: UITableViewController {
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier:historyCellId, for: indexPath) as! HistoryControllerCell
-		cell.title!.text = "\(history.cachedHistory[indexPath.row].string)"
+        var content: String
+        if history.cachedHistory[indexPath.row].string == nil {
+            content = "No Text"
+        } else {
+            content = history.cachedHistory[indexPath.row].string!
+        }
+        cell.title!.text = "\(content)"
 		let dateFor = DateFormatter()
 		dateFor.dateFormat = "YYYY-MM-dd HH:mm"
 		let dateDisplay = dateFor.string(from:history.cachedHistory[indexPath.row].date)
@@ -82,8 +88,8 @@ class QRHistoryController: UITableViewController {
 		tableView.deselectRow(at: indexPath, animated: true)
 		//display the overlay
 		let entry = history.cachedHistory[indexPath.row]
-		NotificationCenter.default.post(name: Notification.Name(kEntrySelectedFromHistoryNotification), object: nil, userInfo:[kEntryUserInfo:entry])
-		self.performSegue(withIdentifier:"removePopover", sender: self)
+		self.removeHistoryPopup()
+        NotificationCenter.default.post(name: Notification.Name(kEntrySelectedFromHistoryNotification), object: nil, userInfo:[kEntryUserInfo:entry])
 	}
 
 	@objc func refreshHistory(sender: AnyObject!) {
@@ -95,14 +101,13 @@ class QRHistoryController: UITableViewController {
 	@IBAction func showScanner (sender: AnyObject) {
 	    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.primaryHidden
 	}
-	
-	@IBAction func cancel(sender: UIBarButtonItem) {
-		self.performSegue(withIdentifier:"removePopover", sender: self)
-	}
-	
+		
+    func removeHistoryPopup () {
+        self.dismiss(animated: true) {}
+    }
 	
 	func removeSelectedEntries() {
-		if let array = self.tableView.indexPathsForSelectedRows as [IndexPath]! {
+		if let array = self.tableView.indexPathsForSelectedRows {
 			for i in array.indices.reversed() {
 				history.markRowForDeletion(row:array[i].row)
 			}
@@ -111,7 +116,6 @@ class QRHistoryController: UITableViewController {
 		}
 
 	}
-
 
 	@IBAction func startEditMode(sender: AnyObject) {
 		if (self.tableView.isEditing){

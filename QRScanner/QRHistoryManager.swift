@@ -72,9 +72,9 @@ class HistoryStorage{
     
     func loadInfo() {
         cachedHistory.removeAll(keepingCapacity: true)
-        let archivedHistory: Data! = UserDefaults.standard.object(forKey:kHistoryStorage) as! Data
+        let archivedHistory: Data? = UserDefaults.standard.object(forKey:kHistoryStorage) as! Data?
         guard let _  = archivedHistory else { return }
-        let history = NSKeyedUnarchiver.unarchiveObject(with:archivedHistory) as! [HistoryEntry]
+        let history = NSKeyedUnarchiver.unarchiveObject(with:archivedHistory!) as! [HistoryEntry]
         for entry in history {
             if (entry.deletionMark) {continue}
             cachedHistory.append(entry)

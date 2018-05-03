@@ -20,6 +20,15 @@ extension CIImage {
 	}
 }
 
+func interfaceOrientationForDevice () -> UIInterfaceOrientation
+{
+    var toOrientation = UIInterfaceOrientation(rawValue: UIDevice.current.orientation.rawValue)
+    if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.unknown}
+    if toOrientation == UIInterfaceOrientation.landscapeRight {toOrientation = UIInterfaceOrientation.landscapeLeft}
+    else if toOrientation == UIInterfaceOrientation.landscapeLeft { toOrientation = UIInterfaceOrientation.landscapeRight}
+    return toOrientation!;
+}
+
 
 class UIViewResize: UIView {
 	
@@ -27,11 +36,14 @@ class UIViewResize: UIView {
 		if ( self.layer.sublayers == nil ){
 			return
 		}
-		for c:CALayer in self.layer.sublayers as [CALayer]! {
-			if c is AVCaptureVideoPreviewLayer {
-				c.frame = self.bounds
-			}
-		}
+        if let sublayers = self.layer.sublayers
+        {
+            for c in sublayers {
+                if c is AVCaptureVideoPreviewLayer {
+                    c.frame = self.bounds
+                }
+            }
+        }
 	}
 }
 
@@ -61,7 +73,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		// Get an instance of the AVCaptureDevice class to initialize a device object and provide the video
 		// as the media type parameter.
 		if (AVCaptureDevice.default(for: AVMediaType.video) == nil ) {
-			print("No capture device available - are we on Simulator? WTH, man?")
+			print("No capture device available - are we on Simulator?")
 			return
 		}
 		let captureDevice:AVCaptureDevice = AVCaptureDevice.default(for:AVMediaType.video)!
@@ -148,15 +160,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 			videoPreviewLayer.transform = CATransform3DConcat(CATransform3DIdentity, CATransform3DMakeRotation(angle, 0, 0, 1));
 		}
 	}
-
+    
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		super.viewWillTransition(to: size, with: coordinator)
-		var toOrientation = UIInterfaceOrientation(rawValue: UIDevice.current.orientation.rawValue)
-		if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.unknown}
-		if toOrientation == UIInterfaceOrientation.landscapeRight {toOrientation = UIInterfaceOrientation.landscapeLeft}
-		else if toOrientation == UIInterfaceOrientation.landscapeLeft { toOrientation = UIInterfaceOrientation.landscapeRight}
-		coordinator.animate(alongsideTransition: { (UIViewControllerTransitionCoordinatorContext) in
-			self.updateViewDisplayAccording(toOrientation: toOrientation!)
+        coordinator.animate(alongsideTransition: { (UIViewControllerTransitionCoordinatorContext) in
+			self.updateViewDisplayAccording(toOrientation: interfaceOrientationForDevice())
 			})
 	}
 
@@ -164,7 +172,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		super.viewDidAppear(animated)
 		if (videoPreviewLayer == nil) {return}
 		videoPreviewLayer.frame = preview.layer.bounds
-
+        self.updateViewDisplayAccording(toOrientation: interfaceOrientationForDevice())
 	}
 
 	override func viewDidDisappear(_ animated: Bool) {
@@ -238,6 +246,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		}
 		for touch in touches {
 			let touchPoint = touch.location(in:self.view)
+            guard let _ = self.preview.layer.sublayers else { break }
 			for layer in self.preview.layer.sublayers! as [CALayer] {
 				let convertedPoint = self.view.layer.convert(touchPoint, to: layer)
 				if !(layer is QRLayer) { continue }
@@ -272,26 +281,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 	
 	func displayOverlay(newHistory: HistoryEntry) {
-//		if let _ = self.qrOverlay {
-//			self.qrOverlay.view.removeFromSuperview()
-//			self.qrOverlay.removeFromParentViewController()
-//			self.qrOverlay = nil
-//		} else {
-//			self.qrOverlay = self.storyboard!.instantiateViewController(withIdentifier:"QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
-//		}
-//		self.qrOverlay.historyToDisplay = newHistory
-		
-//		self.qrOverlay.view.frame = CGRect(x:0, y:0, width:15, height:15)
-//		self.qrOverlay.view.center = self.view.center
-//		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
-//		self.addChildViewController(self.qrOverlay)
-//		self.view.addSubview(self.qrOverlay.view)
-//	
-//		let a = NSLayoutConstraint.constraints(withVisualFormat: "V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
-//			views: ["navView":self.navigationController!.navigationBar, "overlay":self.qrOverlay.view!])
-//		let b = NSLayoutConstraint.constraints(withVisualFormat:"H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
-//		self.parent!.view.addConstraints(a)
-//		self.parent!.view.addConstraints(b)
 		self.performSegue(withIdentifier: "tapQRCode", sender: newHistory);
 	}
 	
@@ -302,18 +291,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		(segue.destination as! QRHistoryOverlayViewController).mainVC = self;
 		(segue.destination as! QRHistoryOverlayViewController).historyToDisplay = (sender as! HistoryEntry)
 	}
-	
-	func openQR(openURL: String!) {
-		if openURL != nil {
-			let url = URL(string: openURL!)
-			guard url != nil else {
-				self.displayMessage(mess: "Not a URL", time: 3.0);
-				return
-			}
-			UIApplication.shared.openURL(url!)
-		}
-	}
-	
+		
 	func removeOverlay(vc: QRHistoryOverlayViewController) {
 		//check if it is posible to open the URL?
 		
