@@ -22,17 +22,17 @@ class QRLayer: CAShapeLayer {
 		self.frame = frame
 		self.frame = self.bounds
 		self.fillColor = lowerColors ? UIColor(red: 0.15, green: 0.15, blue: 0.65, alpha: 0.55).cgColor : UIColor(red: 0, green: 1, blue: 0, alpha: 0.75).cgColor
-		let path = CGMutablePath()
-		path.move(to: CGPoint(x:corners[0].x - self.frame.origin.x,
-		                      y:corners[0].y - self.frame.origin.y))
-		path.addLine(to: CGPoint(x:corners[1].x - self.frame.origin.x,
-		                         y:corners[1].y - self.frame.origin.y))
-		path.addLine(to: CGPoint(x:corners[2].x - self.frame.origin.x,
-		                         y:corners[2].y - self.frame.origin.y))
-		path.addLine(to: CGPoint(x:corners[3].x - self.frame.origin.x,
-		                         y:corners[3].y - self.frame.origin.y))
-		path.closeSubpath()
-		
+//        let path = CGMutablePath()
+//        path.move(to: CGPoint(x:corners[0].x - self.frame.origin.x,
+//                              y:corners[0].y - self.frame.origin.y))
+//        path.addLine(to: CGPoint(x:corners[1].x - self.frame.origin.x,
+//                                 y:corners[1].y - self.frame.origin.y))
+//        path.addLine(to: CGPoint(x:corners[2].x - self.frame.origin.x,
+//                                 y:corners[2].y - self.frame.origin.y))
+//        path.addLine(to: CGPoint(x:corners[3].x - self.frame.origin.x,
+//                                 y:corners[3].y - self.frame.origin.y))
+        let path = CGPath(rect: frame, transform: nil)
+        
 		self.path = path
 		self.fillRule = kCAFillRuleEvenOdd
 		self.timer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(timeout(timer:)), userInfo: nil, repeats: false)
