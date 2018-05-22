@@ -116,7 +116,12 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 
 		let dispatchQueue : DispatchQueue = DispatchQueue(label: "CaptureOutputQueue")
 		captureMetadataOutput.setMetadataObjectsDelegate(self, queue:dispatchQueue)
-		captureMetadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
+		captureMetadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr,
+                                                     AVMetadataObject.ObjectType.aztec,
+                                                     AVMetadataObject.ObjectType.code39,
+                                                     AVMetadataObject.ObjectType.code39Mod43,
+                                                     AVMetadataObject.ObjectType.code93,
+                                                     AVMetadataObject.ObjectType.code128 ]
 		// Initialize the video preview layer and add it as a sublayer to the viewPreview view's layer.
 		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 		videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
@@ -188,14 +193,18 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		guard metadataObjects.count != 0 else { return }
 		
 		let mObj = metadataObjects.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
-			($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.qr } as! [AVMetadataMachineReadableCodeObject]
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.qr ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.aztec ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code39 ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code39Mod43 ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code93 ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code128} as! [AVMetadataMachineReadableCodeObject]
 
 		DispatchQueue.main.async {
 			for i in mObj.indices {
 				let index: QRLayer
 				let obj = mObj[i]
 				let object = self.videoPreviewLayer.transformedMetadataObject(for:obj) as! AVMetadataMachineReadableCodeObject
-				
 				if self.layers.count <= i {
 					index = QRLayer()
 					self.preview.layer.addSublayer(index)
@@ -208,10 +217,14 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 					let newPoint = self.videoPreviewLayer.superlayer!.convert(j, from: self.videoPreviewLayer)
 					arrayOfPoints.append(newPoint)
 				}
+                
 				index.qrString = object.stringValue!
-				
-				let newRect = self.videoPreviewLayer.superlayer!.convert(object.bounds, from: self.videoPreviewLayer)
-				index.updateLocation(frame: newRect, corners: arrayOfPoints)
+                var size : CGSize = object.bounds.size
+                if (object.bounds.size.height <= 0.2) { size.height = 0.2 }
+                if (object.bounds.size.width <= 0.2) { size.width = 0.2 }
+                
+                let newRect = self.videoPreviewLayer.superlayer!.convert(CGRect(origin:object.bounds.origin, size: size), from: self.videoPreviewLayer)
+                index.updateLocation(frame: newRect, corners:[])//, corners: arrayOfPoints)
 				index.lowerColors = (self.qrOverlay != nil)
 			}
 		}
