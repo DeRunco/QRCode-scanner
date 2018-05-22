@@ -217,8 +217,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 					let newPoint = self.videoPreviewLayer.superlayer!.convert(j, from: self.videoPreviewLayer)
 					arrayOfPoints.append(newPoint)
 				}
-                print("Object: \(obj)")
-                print("Object Bounds: \(obj.bounds)")
                 
 				index.qrString = object.stringValue!
                 var size : CGSize = object.bounds.size

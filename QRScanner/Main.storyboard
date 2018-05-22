@@ -112,7 +112,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="SSz-9P-0cx">
                         <rightBarButtonItems>
-                            <barButtonItem image="favorite" width="40" id="ph7-lh-wJi">
+                            <barButtonItem systemItem="add" id="ph7-lh-wJi">
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <action selector="updateHistoryWithSender:" destination="SKm-Pl-KVn" id="zmL-Hi-eUF"/>
@@ -198,7 +198,4 @@
             <point key="canvasLocation" x="882" y="304"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="favorite" width="35" height="35"/>
-    </resources>
 </document>
