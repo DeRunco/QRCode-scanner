@@ -88,7 +88,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		}
 		captureDevice.unlockForConfiguration()
 		// Get an instance of the AVCaptureDeviceInput class using the previous device object.
-//		let input:AVCaptureDeviceInput! = AVCaptureDeviceInput.deviceInputWithDevice(captureDevice) as AVCaptureDeviceInput?
+
 		let input:AVCaptureDeviceInput!
 		do {
 			try input = AVCaptureDeviceInput(device:captureDevice)
@@ -224,8 +224,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
                 if (object.bounds.size.width <= 0.2) { size.width = 0.2 }
                 
                 let newRect = self.videoPreviewLayer.superlayer!.convert(CGRect(origin:object.bounds.origin, size: size), from: self.videoPreviewLayer)
-                index.updateLocation(frame: newRect, corners:[])//, corners: arrayOfPoints)
-				index.lowerColors = (self.qrOverlay != nil)
+                index.updateLocation(frame: newRect)
 			}
 		}
 	}
@@ -248,10 +247,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		(timer.userInfo! as! UILabel).alpha = 0
 	}
 	
-//	@IBAction func backFromHistory(button: UIBarButtonItem) {
-//		
-//	}
-	
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if self.qrOverlay != nil {
 			super.touchesEnded(touches, with: event)
@@ -272,7 +267,6 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 					newHistory.date = Date()
 
 					self.displayOverlay(newHistory: newHistory)
-					//TODO add the history entry
 					return
 				}
 			}
@@ -306,13 +300,11 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 	}
 		
 	func removeOverlay(vc: QRHistoryOverlayViewController) {
-		//check if it is posible to open the URL?
-		
 		if self.qrOverlay == vc {
 			self.qrOverlay = nil
 			self.selectedLayer = nil
 		}
-//		self.updateSelectedLayer()
+
 		UIView.animate(withDuration: 0.3, animations: { () -> Void in
 			vc.view.frame.origin.y = vc.view.frame.size.height
 		}) { (_) -> Void in
