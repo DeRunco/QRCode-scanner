@@ -21,19 +21,11 @@ class QRNavigationController: UINavigationController, UINavigationControllerDele
 		// Dispose of any resources that can be recreated.
 	}
 	
-	func navigationController(navigationController: UINavigationController, didShowViewController viewController: UIViewController, animated: Bool) {
+	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
 		if (viewController is QRViewController),
 			let _=(viewController as! QRViewController).qrOverlay {
-				(viewController as! QRViewController).displayOverlay((viewController as! QRViewController).qrOverlay.historyToDisplay)
+				(viewController as! QRViewController).displayOverlay(newHistory: (viewController as! QRViewController).qrOverlay.historyToDisplay)
 		}
-	}
-	@IBAction func unwindToNavigation(seg: UIStoryboardSegue)
-	{
-		
-	}
-	
-	override func viewControllerForUnwindSegueAction(action: Selector, fromViewController: UIViewController, withSender sender: AnyObject?) -> UIViewController? {
-		return self;
 	}
 	
 }

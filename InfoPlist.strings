@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  QRScanner
+
+  Created by Charles Thierry on 23/09/16.
+  Copyright © 2016 Weemo, Inc. All rights reserved.
+*/
+
+"NSCameraUsageDescription" = "";

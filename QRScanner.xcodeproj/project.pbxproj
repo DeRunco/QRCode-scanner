@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		562B9F652099B79000E09C10 /* QRHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562B9F642099B78F00E09C10 /* QRHistoryManager.swift */; };
 		562DCB161B45341C00A95D2C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB151B45341C00A95D2C /* AppDelegate.swift */; };
 		562DCB401B45345100A95D2C /* QRHistoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3A1B45345100A95D2C /* QRHistoryController.swift */; };
 		562DCB421B45345100A95D2C /* QRLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 562DCB3C1B45345100A95D2C /* QRLayer.swift */; };
@@ -16,9 +17,11 @@
 		566BF5711B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */; };
 		56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 56A1D58C1B46B52C00EA9336 /* Images.xcassets */; };
 		56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 562DCB551B457BC700A95D2C /* Main.storyboard */; };
+		FB8281581D95A6DD0095D446 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FB8281571D95A6DD0095D446 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		562B9F642099B78F00E09C10 /* QRHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRHistoryManager.swift; sourceTree = "<group>"; };
 		562DCB101B45341C00A95D2C /* QRScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		562DCB141B45341C00A95D2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		562DCB151B45341C00A95D2C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -30,6 +33,7 @@
 		56670B141C185FC3002D5133 /* QRNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRNavigationController.swift; sourceTree = "<group>"; };
 		566BF5701B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRHistoryOverlayViewController.swift; sourceTree = "<group>"; };
 		56A1D58C1B46B52C00EA9336 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FB8281571D95A6DD0095D446 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +50,7 @@
 		562DCB071B45341C00A95D2C = {
 			isa = PBXGroup;
 			children = (
+				FB8281571D95A6DD0095D446 /* InfoPlist.strings */,
 				562DCB121B45341C00A95D2C /* QRScanner */,
 				562DCB111B45341C00A95D2C /* Products */,
 			);
@@ -63,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				562DCB3A1B45345100A95D2C /* QRHistoryController.swift */,
+				562B9F642099B78F00E09C10 /* QRHistoryManager.swift */,
 				562DCB3C1B45345100A95D2C /* QRLayer.swift */,
 				562DCB3D1B45345100A95D2C /* QRViewController.swift */,
 				56670B141C185FC3002D5133 /* QRNavigationController.swift */,
@@ -118,7 +124,8 @@
 					562DCB0F1B45341C00A95D2C = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = WDH9UWSA4G;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1130;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -127,6 +134,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -146,6 +154,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				56A1D5911B46B83E00EA9336 /* Main.storyboard in Resources */,
+				FB8281581D95A6DD0095D446 /* InfoPlist.strings in Resources */,
 				56A1D58D1B46B52C00EA9336 /* Images.xcassets in Resources */,
 				562DCB581B457BC700A95D2C /* LaunchScreen.xib in Resources */,
 			);
@@ -162,6 +171,7 @@
 				562DCB421B45345100A95D2C /* QRLayer.swift in Sources */,
 				562DCB161B45341C00A95D2C /* AppDelegate.swift in Sources */,
 				562DCB431B45345100A95D2C /* QRViewController.swift in Sources */,
+				562B9F652099B79000E09C10 /* QRHistoryManager.swift in Sources */,
 				56670B151C185FC3002D5133 /* QRNavigationController.swift in Sources */,
 				566BF5711B4FA8BF00BC0B54 /* QRHistoryOverlayViewController.swift in Sources */,
 			);
@@ -259,13 +269,14 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = WDH9UWSA4G;
 				INFOPLIST_FILE = QRScanner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.derunco.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sightcall.qrscanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -278,12 +289,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = WDH9UWSA4G;
 				INFOPLIST_FILE = QRScanner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.derunco.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sightcall.qrscanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

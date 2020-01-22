@@ -12,12 +12,21 @@ import AVFoundation
 
 extension CIImage {
 	
-	class func createQRForString(qrString: NSString) ->CIImage {
-		let stringData = qrString.dataUsingEncoding(NSISOLatin1StringEncoding)
+	class func createQRForString(qrString: String) ->CIImage {
+		let stringData = qrString.data(using: String.Encoding.utf8)
 		let qrFilter = CIFilter(name:"CIQRCodeGenerator")
 		qrFilter!.setValue(stringData, forKey: "inputMessage")
 		return qrFilter!.outputImage!
 	}
+}
+
+func interfaceOrientationForDevice () -> UIInterfaceOrientation
+{
+    var toOrientation = UIInterfaceOrientation(rawValue: UIDevice.current.orientation.rawValue)
+    if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.unknown}
+    if toOrientation == UIInterfaceOrientation.landscapeRight {toOrientation = UIInterfaceOrientation.landscapeLeft}
+    else if toOrientation == UIInterfaceOrientation.landscapeLeft { toOrientation = UIInterfaceOrientation.landscapeRight}
+    return toOrientation!;
 }
 
 
@@ -27,11 +36,14 @@ class UIViewResize: UIView {
 		if ( self.layer.sublayers == nil ){
 			return
 		}
-		for c:CALayer in self.layer.sublayers as [CALayer]! {
-			if c.isKindOfClass(AVCaptureVideoPreviewLayer) {
-				c.frame = self.bounds
-			}
-		}
+        if let sublayers = self.layer.sublayers
+        {
+            for c in sublayers {
+                if c is AVCaptureVideoPreviewLayer {
+                    c.frame = self.bounds
+                }
+            }
+        }
 	}
 }
 
@@ -60,26 +72,27 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		self.view.addSubview(message)
 		// Get an instance of the AVCaptureDevice class to initialize a device object and provide the video
 		// as the media type parameter.
-		if (AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) == nil ) {
-			print("No capture device available - are we on Simulator? WTH, man?")
+		if (AVCaptureDevice.default(for: AVMediaType.video) == nil ) {
+			print("No capture device available - are we on Simulator?")
 			return
 		}
-		let captureDevice:AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+		let captureDevice:AVCaptureDevice = AVCaptureDevice.default(for:AVMediaType.video)!
 		do {
 			try captureDevice.lockForConfiguration()
 		} catch let error as NSError {
 			print("An error occured: \(error)")
 		}
-		if (captureDevice.isFocusModeSupported(AVCaptureFocusMode.ContinuousAutoFocus)) {
-			captureDevice.focusMode = AVCaptureFocusMode.ContinuousAutoFocus
+		if (captureDevice.isFocusModeSupported(AVCaptureDevice.FocusMode.continuousAutoFocus)) {
+			captureDevice.focusPointOfInterest = CGPoint(x:0.5, y:0.5)
+			captureDevice.focusMode = AVCaptureDevice.FocusMode.continuousAutoFocus
 		}
 		captureDevice.unlockForConfiguration()
 		// Get an instance of the AVCaptureDeviceInput class using the previous device object.
-//		let input:AVCaptureDeviceInput! = AVCaptureDeviceInput.deviceInputWithDevice(captureDevice) as AVCaptureDeviceInput?
+
 		let input:AVCaptureDeviceInput!
 		do {
 			try input = AVCaptureDeviceInput(device:captureDevice)
-			if (input == nil) {
+			guard input != nil else {
 				// If any error occurs, simply log the description of it and don't continue any more.
 				NSLog("Could not get capture")
 				return
@@ -93,243 +106,209 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		// Set the input device on the capture session.
 		captureSession.addInput(input)
 
-		let CaptureOutputQueue : dispatch_queue_t = dispatch_queue_create("CaptureOutputQueue", nil)
-		captureOutput.setSampleBufferDelegate(self, queue: CaptureOutputQueue)
+		let captureOutputQueue : DispatchQueue = DispatchQueue(label: "CaptureOutputQueue")
+		captureOutput.setSampleBufferDelegate(self, queue: captureOutputQueue)
 		captureSession.addOutput(captureOutput)
 		// Initialize a AVCaptureMetadataOutput object and set it as the output device to the capture session.
 		let captureMetadataOutput : AVCaptureMetadataOutput = AVCaptureMetadataOutput()
 		captureSession.addOutput(captureMetadataOutput)
 		// Create a new serial dispatch queue.
 
-		let dispatchQueue : dispatch_queue_t = dispatch_queue_create("CaptureMetadataQueue", nil)
+		let dispatchQueue : DispatchQueue = DispatchQueue(label: "CaptureOutputQueue")
 		captureMetadataOutput.setMetadataObjectsDelegate(self, queue:dispatchQueue)
-		captureMetadataOutput.metadataObjectTypes = [AVMetadataObjectTypeQRCode]
+		captureMetadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr,
+                                                     AVMetadataObject.ObjectType.aztec,
+                                                     AVMetadataObject.ObjectType.code39,
+                                                     AVMetadataObject.ObjectType.code39Mod43,
+                                                     AVMetadataObject.ObjectType.code93,
+                                                     AVMetadataObject.ObjectType.code128 ]
 		// Initialize the video preview layer and add it as a sublayer to the viewPreview view's layer.
 		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-		videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-		videoPreviewLayer.contentsGravity = kCAGravityResizeAspectFill
+		videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+		videoPreviewLayer.contentsGravity = CALayerContentsGravity.resizeAspectFill
 		//setup the view displaying the preview layer
 		preview.layer.addSublayer(videoPreviewLayer)
-		preview.layer.borderColor = UIColor.orangeColor().CGColor
+		preview.layer.borderColor = UIColor.orange.cgColor
 		preview.layer.borderWidth = 1
 		preview.clipsToBounds = false
 		captureSession.startRunning()
-		if (videoPreviewLayer == nil) {print("Running on the simulator"); return}
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QRViewController.displayOverlayFromHistory(_:)), name: kEntrySelectedFromHistoryNotification, object: nil)
+		if (videoPreviewLayer == nil) { print("Running on the simulator"); return }
+		NotificationCenter.default.addObserver(self, selector: #selector(displayOverlayFromHistory(notification:)),
+		                                       name: Notification.Name(kEntrySelectedFromHistoryNotification), object: nil)
 	}
 
 	//the video orientation is bound to the interface orientation
-	func updateViewDisplayAccordingToOrientation(orientation: UIInterfaceOrientation) {
-		if captureOutput.connectionWithMediaType(AVMediaTypeVideo) == nil {print("No video connection for \(captureOutput)"); return}
+	func updateViewDisplayAccording(toOrientation: UIInterfaceOrientation) {
+		if captureOutput.connection(with:AVMediaType.video) == nil {print("No video connection for \(captureOutput)"); return}
 		var videoOrientation :AVCaptureVideoOrientation
-		switch (orientation) {
-		case .Portrait: videoOrientation = AVCaptureVideoOrientation.Portrait
-		case .LandscapeLeft: videoOrientation = AVCaptureVideoOrientation.LandscapeLeft
-		case .LandscapeRight: videoOrientation = AVCaptureVideoOrientation.LandscapeRight
-		case .PortraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.PortraitUpsideDown
-		case .Unknown: videoOrientation = captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation
+		switch (toOrientation) {
+		case .portrait: videoOrientation = AVCaptureVideoOrientation.portrait
+		case .landscapeLeft: videoOrientation = AVCaptureVideoOrientation.landscapeLeft
+		case .landscapeRight: videoOrientation = AVCaptureVideoOrientation.landscapeRight
+		case .portraitUpsideDown : videoOrientation = AVCaptureVideoOrientation.portraitUpsideDown
+		case .unknown: videoOrientation = captureOutput.connection(with:AVMediaType.video)!.videoOrientation
 		}
 		//pretty sure the connection rotation is not needed since we are not actually using the content.
-		captureOutput.connectionWithMediaType(AVMediaTypeVideo)!.videoOrientation = videoOrientation
+		captureOutput.connection(with:AVMediaType.video)!.videoOrientation = videoOrientation
 
 		var angle: CGFloat = 0.0
 		var shouldRotate = true
-		switch (orientation) {
-		case .Portrait: angle = 0
-		case .PortraitUpsideDown: angle = CGFloat(M_PI)
-		case .LandscapeRight: angle = ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) ? CGFloat(-M_PI_2) : CGFloat(M_PI_2))
-		case .LandscapeLeft: angle = ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) ? CGFloat(M_PI_2) : CGFloat(-M_PI_2))
-		case .Unknown: shouldRotate = false
+		switch (toOrientation) {
+		case .portrait: angle = 0
+		case .portraitUpsideDown: angle = CGFloat(Double.pi)
+		case .landscapeRight: angle = CGFloat(Double.pi / 2)
+		case .landscapeLeft: angle = CGFloat(-Double.pi / 2)
+		case .unknown: shouldRotate = false
 		}
 
 		if shouldRotate {
 			videoPreviewLayer.transform = CATransform3DConcat(CATransform3DIdentity, CATransform3DMakeRotation(angle, 0, 0, 1));
 		}
 	}
-
-	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-	    super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-		var toOrientation = UIInterfaceOrientation(rawValue: UIDevice.currentDevice().orientation.rawValue)
-		if (toOrientation == nil) {toOrientation = UIInterfaceOrientation.Unknown}
-		if toOrientation == UIInterfaceOrientation.LandscapeRight {toOrientation = UIInterfaceOrientation.LandscapeLeft}
-		else if toOrientation == UIInterfaceOrientation.LandscapeLeft { toOrientation = UIInterfaceOrientation.LandscapeRight}
-		coordinator.animateAlongsideTransition({ (_) -> Void in
-			self.willAnimateRotationToInterfaceOrientation(toOrientation!, duration: 0.3)
-			}, completion:nil	)
+    
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { (UIViewControllerTransitionCoordinatorContext) in
+			self.updateViewDisplayAccording(toOrientation: interfaceOrientationForDevice())
+			})
 	}
 
-	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-		self.updateViewDisplayAccordingToOrientation(toInterfaceOrientation)
-	}
-
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		if (videoPreviewLayer == nil) {return}
 		videoPreviewLayer.frame = preview.layer.bounds
-
+        self.updateViewDisplayAccording(toOrientation: interfaceOrientationForDevice())
 	}
 
-	override func preferredInterfaceOrientationForPresentation() -> UIInterfaceOrientation {
-		return UIInterfaceOrientation.Portrait
-	}
-
-	override func viewDidDisappear(animated: Bool) {
+	override func viewDidDisappear(_ animated: Bool) {
+		super.viewDidDisappear(animated)
 		for layer in self.layers {
 			layer.removeFromSuperlayer()
 		}
 		layers = [QRLayer]()
 	}
 
-	func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+	func metadataOutput(_ captureOutput: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
 		guard isScanning else { return }
-		guard metadataObjects != nil else { return }
 		guard metadataObjects.count != 0 else { return }
 		
-		let mObj = metadataObjects?.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
-			($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObjectTypeQRCode } as! [AVMetadataMachineReadableCodeObject]
+		let mObj = metadataObjects.filter { $0 is AVMetadataMachineReadableCodeObject }.filter {
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.qr ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.aztec ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code39 ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code39Mod43 ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code93 ||
+            ($0 as! AVMetadataMachineReadableCodeObject).type == AVMetadataObject.ObjectType.code128} as! [AVMetadataMachineReadableCodeObject]
 
-		var counter: Int = 0
-		dispatch_async(dispatch_get_main_queue(), { () -> Void in
-			for obj in mObj{
-				let object = self.videoPreviewLayer.transformedMetadataObjectForMetadataObject(obj) as! AVMetadataMachineReadableCodeObject
-				var index: QRLayer
-				
-				if self.layers.count <= counter {
+		DispatchQueue.main.async {
+			for i in mObj.indices {
+				let index: QRLayer
+				let obj = mObj[i]
+				let object = self.videoPreviewLayer.transformedMetadataObject(for:obj) as! AVMetadataMachineReadableCodeObject
+				if self.layers.count <= i {
 					index = QRLayer()
 					self.preview.layer.addSublayer(index)
 					self.layers.append(index)
 				} else {
-					index = self.layers[counter]
+					index = self.layers[i]
 				}
-				// because ++ are only used in C-style for loops, and are are signs of Evil and Cute-But-Difficult-to-Understand Code. Also Chris Lattner doesn't like them.
-				// https://stackoverflow.com/questions/35158422/the-and-operators-have-been-deprecated-xcode-7-3
-				counter += 1
-				
 				var arrayOfPoints = [CGPoint]()
-
-				// this range syntax pleases Chris Lattner because it is clear.
-				// for j in object.corners.indices { // to be fair it is better in swift 3
-				for j in 0 ..< object.corners.count {
-					var newPoint = CGPointZero
-					let pointDict = object.corners[j] as? NSDictionary
-					CGPointMakeWithDictionaryRepresentation(pointDict!, &newPoint)
-					newPoint = self.videoPreviewLayer.superlayer!.convertPoint(newPoint, fromLayer: self.videoPreviewLayer)
+				for j in object.corners {
+					let newPoint = self.videoPreviewLayer.superlayer!.convert(j, from: self.videoPreviewLayer)
 					arrayOfPoints.append(newPoint)
 				}
-				
-				index.qrString = object.stringValue
-
-				let newRect = self.videoPreviewLayer.superlayer!.convertRect(object.bounds, fromLayer: self.videoPreviewLayer)
-				index.updateLocation(newRect, corners: arrayOfPoints)
-//					self.updateSelectedLayer()
-				index.lowerColors = (self.qrOverlay != nil)
+                
+				index.qrString = object.stringValue!
+                var size : CGSize = object.bounds.size
+                if (object.bounds.size.height <= 0.2) { size.height = 0.2 }
+                if (object.bounds.size.width <= 0.2) { size.width = 0.2 }
+                
+                let newRect = self.videoPreviewLayer.superlayer!.convert(CGRect(origin:object.bounds.origin, size: size), from: self.videoPreviewLayer)
+                index.updateLocation(frame: newRect)
 			}
-		})
+		}
 	}
 
-	func displayMessage(mess: String!, time: NSTimeInterval) {
+	func displayMessage(mess: String!, time: TimeInterval) {
 		message.text = mess
 		message.numberOfLines = 0
 		message.alpha = 1
-		message.font = UIFont.systemFontOfSize(24)
-		message.backgroundColor = UIColor.redColor()
-		message.textColor = UIColor.whiteColor()
-		let size = message.sizeThatFits(CGSizeMake(self.view.bounds.size.width, 200))
-		message.frame = CGRectMake(self.view.bounds.size.width/2 - size.width/2, self.preview.frame.origin.y, size.width, size.height)
-		NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: #selector(QRViewController.hideMessage(_:)), userInfo:["view":message], repeats: false)
+		message.font = UIFont.systemFont(ofSize:24)
+		message.backgroundColor = UIColor.red
+		message.textColor = UIColor.white
+		let size = message.sizeThatFits(CGSize(width:self.view.bounds.size.width, height:200))
+		message.frame = CGRect(x:self.view.bounds.size.width/2 - size.width/2, y:self.preview.frame.origin.y,
+		                       width: size.width, height:size.height)
+		Timer.scheduledTimer(timeInterval:time, target: self, selector: #selector(hideMessage(timer:)),
+		                     userInfo:message, repeats: false)
 	}
 
-	func hideMessage(timer: NSTimer) {
-		(timer.userInfo!["view"]! as! UILabel).alpha = 0
+	@objc func hideMessage(timer: Timer) {
+		(timer.userInfo! as! UILabel).alpha = 0
 	}
 	
-	@IBAction func backFromHistory(button: UIBarButtonItem) {
-		
-	}
-
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		if let _ = self.qrOverlay {
-			super.touchesEnded(touches, withEvent: event)
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if self.qrOverlay != nil {
+			super.touchesEnded(touches, with: event)
 			return
 		}
-		
 		for touch in touches {
-			let touchPoint = touch.locationInView(self.view)
-			for layer in self.preview.layer.sublayers as [CALayer]! {
-				let convertedPoint = self.view.layer.convertPoint(touchPoint, toLayer: layer)
-				if !(layer is QRLayer) {continue}
-				if CGPathContainsPoint((layer as! QRLayer).path!, nil, convertedPoint, true) {
+			let touchPoint = touch.location(in:self.view)
+            guard let _ = self.preview.layer.sublayers else { break }
+			for layer in self.preview.layer.sublayers! as [CALayer] {
+				let convertedPoint = self.view.layer.convert(touchPoint, to: layer)
+				if !(layer is QRLayer) { continue }
+				
+				if (layer as! QRLayer).path!.contains(convertedPoint) {
 					self.selectedLayer = (layer as! QRLayer)
 
 					let newHistory = HistoryEntry()
 					newHistory.string = (layer as! QRLayer).qrString
-					newHistory.date = NSDate()
+					newHistory.date = Date()
 
-					self.displayOverlay(newHistory)
-					//TODO add the history entry
-					return //no need to continue parsing throught the available QR
+					self.displayOverlay(newHistory: newHistory)
+					return
 				}
 			}
 		}
-
+		
 	}
 	
 
 
-	func displayOverlayFromHistory(notification: NSNotification) {
-		self.navigationController!.popToRootViewControllerAnimated(true)
-		dispatch_async(dispatch_get_main_queue()) { () -> Void in
+	@objc func displayOverlayFromHistory(notification: NSNotification) {
+		self.navigationController!.popToRootViewController(animated:true)
+		DispatchQueue.main.async {
 			if let userInfo = notification.userInfo as? [String:HistoryEntry] {
 				if let entry = userInfo[kEntryUserInfo] {
-					self.displayOverlay(entry)
+					self.displayOverlay(newHistory:entry)
 				}
 			}
 		}
 	}
 	
 	func displayOverlay(newHistory: HistoryEntry) {
-		if let _ = self.qrOverlay {
-//			self.qrOverlay.view.removeFromSuperview()
-//			self.qrOverlay.removeFromParentViewController()
-//			self.qrOverlay = nil
-		} else {
-			self.qrOverlay = self.storyboard!.instantiateViewControllerWithIdentifier("QRHistoryOverlayViewController") as! QRHistoryOverlayViewController
+		self.performSegue(withIdentifier: "tapQRCode", sender: newHistory);
+	}
+	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		guard sender is HistoryEntry else {
+			return;
 		}
-		self.qrOverlay.historyToDisplay = newHistory
+		(segue.destination as! QRHistoryOverlayViewController).mainVC = self;
+		(segue.destination as! QRHistoryOverlayViewController).historyToDisplay = (sender as! HistoryEntry)
+	}
 		
-		self.qrOverlay.view.frame = CGRectMake(0, 0, 15, 15)
-		self.qrOverlay.view.center = self.view.center
-		self.qrOverlay.view.translatesAutoresizingMaskIntoConstraints = false
-		self.addChildViewController(self.qrOverlay)
-		self.view.addSubview(self.qrOverlay.view)
-	
-		let a = NSLayoutConstraint.constraintsWithVisualFormat("V:[navView]-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil,
-			views: ["navView":self.navigationController!.navigationBar, "overlay":self.qrOverlay.view!])
-		let b = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[overlay]-0-|", options: NSLayoutFormatOptions(rawValue:0), metrics: nil, views: ["overlay":self.qrOverlay.view])
-		self.parentViewController!.view.addConstraints(a)
-		self.parentViewController!.view.addConstraints(b)
-	}
-	
-	
-	func openQR(openURL: String!) {
-		if openURL != nil {
-			let url = NSURL(string: openURL!)
-			UIApplication.sharedApplication().openURL(url!)
-		}
-	}
-	
 	func removeOverlay(vc: QRHistoryOverlayViewController) {
-		//check if it is posible to open the URL?
-		
 		if self.qrOverlay == vc {
 			self.qrOverlay = nil
 			self.selectedLayer = nil
 		}
-//		self.updateSelectedLayer()
-		UIView.animateWithDuration(0.3, animations: { () -> Void in
+
+		UIView.animate(withDuration: 0.3, animations: { () -> Void in
 			vc.view.frame.origin.y = vc.view.frame.size.height
 		}) { (_) -> Void in
-			vc.removeFromParentViewController()
+			vc.removeFromParent()
 			vc.view.removeFromSuperview()
 		}
 	}
