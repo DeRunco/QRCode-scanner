@@ -29,7 +29,7 @@ class QRHistoryController: UITableViewController {
 		refresh.backgroundColor = UIColor.orange
 		refresh.tintColor = UIColor.white
 		refresh.addTarget(self, action: #selector(refreshHistory(sender:)),
-		                  for: UIControlEvents.valueChanged)
+		                  for: UIControl.Event.valueChanged)
 		self.refreshControl = refresh
 		self.tableView.allowsMultipleSelectionDuringEditing = true
 	}
@@ -74,12 +74,12 @@ class QRHistoryController: UITableViewController {
 		return true
 	}
 	
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-		if (editingStyle == UITableViewCellEditingStyle.delete) {
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		if (editingStyle == UITableViewCell.EditingStyle.delete) {
 			history.cachedHistory.remove(at:indexPath.row)
 			history.saveInfo(entries: nil)
 			history.loadInfo()
-			tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
+			tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.fade)
 		}
 	}
 
@@ -99,7 +99,7 @@ class QRHistoryController: UITableViewController {
 	}
 
 	@IBAction func showScanner (sender: AnyObject) {
-	    self.splitViewController!.preferredDisplayMode = UISplitViewControllerDisplayMode.primaryHidden
+	    self.splitViewController!.preferredDisplayMode = UISplitViewController.DisplayMode.primaryHidden
 	}
 		
     func removeHistoryPopup () {
@@ -112,7 +112,7 @@ class QRHistoryController: UITableViewController {
 				history.markRowForDeletion(row:array[i].row)
 			}
 			history.saveInfo(entries: nil)
-			tableView.deleteRows(at:array, with: UITableViewRowAnimation.fade)
+			tableView.deleteRows(at:array, with: UITableView.RowAnimation.fade)
 		}
 
 	}

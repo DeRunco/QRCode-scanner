@@ -22,7 +22,7 @@ class QRLayer: CAShapeLayer {
         let path = CGPath(rect: frame, transform: nil)
         
 		self.path = path
-		self.fillRule = kCAFillRuleEvenOdd
+		self.fillRule = CAShapeLayerFillRule.evenOdd
 		self.timer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(timeout(timer:)), userInfo: nil, repeats: false)
 	}
 	

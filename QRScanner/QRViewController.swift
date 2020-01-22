@@ -125,7 +125,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		// Initialize the video preview layer and add it as a sublayer to the viewPreview view's layer.
 		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 		videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-		videoPreviewLayer.contentsGravity = kCAGravityResizeAspectFill
+		videoPreviewLayer.contentsGravity = CALayerContentsGravity.resizeAspectFill
 		//setup the view displaying the preview layer
 		preview.layer.addSublayer(videoPreviewLayer)
 		preview.layer.borderColor = UIColor.orange.cgColor
@@ -308,7 +308,7 @@ class QRViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate
 		UIView.animate(withDuration: 0.3, animations: { () -> Void in
 			vc.view.frame.origin.y = vc.view.frame.size.height
 		}) { (_) -> Void in
-			vc.removeFromParentViewController()
+			vc.removeFromParent()
 			vc.view.removeFromSuperview()
 		}
 	}
